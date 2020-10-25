@@ -29,7 +29,7 @@ public class WordSearch3D {
 	 * @param grid the grid of characters comprising the word search puzzle
 	 * @param word the word to search for
 	 * @return If the grid contains the
-	 * word, then the method returns a list of the (3-d) locations of its letters; if not, 
+	 * word, then the method returns a list of the (3-d) locations of its letters; if not,
 	 */
 	/*public int[][] search (char[][][] grid, String word) {
 		// TODO: implement me
@@ -260,6 +260,7 @@ public class WordSearch3D {
 	public char[][][] make (String[] words, int sizeX, int sizeY, int sizeZ) {
 		// TODO: implement me
 		char[][][] grid = new char[sizeZ][sizeY][sizeX];
+		ArrayList<int[]> vectors = makeVectors();
 
 		for (int i = 0; i < words.length; i++) {
 			final Random rng = new Random();
@@ -273,10 +274,17 @@ public class WordSearch3D {
 			System.out.println("Random y: " + randomY);
 			System.out.println("Random z: " + randomZ);
 
-			ArrayList<int[]> vectors = makeVectors();
+			for (int k = 0; k < 1000; k ++) {
+				final int randomPosition = rng.nextInt(26);
+				int[] randomVector = vectors.get(randomPosition);
+				if (!valid(randomVector, grid, words[i], randomX, randomY, randomZ)) continue;
 
-			final int randomPosition = rng.nextInt(26);
-			int[] randomVector = vectors.get(randomPosition);
+				for (int t = 0; t < words[i].length(); t++) {
+					if (Character.isLetter(grid[randomY][randomY][randomX])) {
+
+					}
+				}
+			}
 
 
 			//System.out.println(randomPosition);
