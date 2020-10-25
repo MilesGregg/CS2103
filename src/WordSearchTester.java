@@ -49,6 +49,36 @@ public class WordSearchTester {
 	}
 
 	@Test
+	/**
+	 * Verifies that make can generate a grid when it's *necessary* for words to share
+	 * some common letter locations.
+	 */
+	public void testMakeWithIntersection () {
+		final String[] words = new String[] { "amc", "dmf", "gmi", "jml", "nmo", "pmr", "smu", "vmx", "yma", "zmq" };
+		final char[][][] grid = _wordSearch.make(words, 3, 3, 3);
+		assertNotNull(grid);
+	}
+
+	@Test
+	/**
+	 * Verifies that make returns a grid of the appropriate size.
+	 */
+	public void testMakeGridSize () {
+		final String[] words = new String[] { "at", "it", "ix", "ax" };
+		final char[][][] grid = _wordSearch.make(words, 17, 11, 13);
+		assertEquals(grid.length, 17);
+		for (int x = 0; x < 2; x++) {
+			assertEquals(grid[x].length, 11);
+			for (int y = 0; y < 2; y++) {
+				assertEquals(grid[x][y].length, 13);
+			}
+		}
+	}
+
+	/* TODO: write more methods for both make and search. */
+
+
+	@Test
 	public void testSearchAdvancedDepth() {
 		final char[][][] grid = {
 				{
@@ -118,34 +148,7 @@ public class WordSearchTester {
 		assertEquals(location[2][2], 2);
 	}
 
-	@Test
-	/**
-	 * Verifies that make can generate a grid when it's *necessary* for words to share
-	 * some common letter locations.
-	 */
-	public void testMakeWithIntersection () {
-		final String[] words = new String[] { "amc", "dmf", "gmi", "jml", "nmo", "pmr", "smu", "vmx", "yma", "zmq" };
-		final char[][][] grid = _wordSearch.make(words, 3, 3, 3);
-		assertNotNull(grid);
-	}
-
-	@Test
-	/**
-	 * Verifies that make returns a grid of the appropriate size.
-	 */
-	public void testMakeGridSize () {
-		final String[] words = new String[] { "at", "it", "ix", "ax" };
-		final char[][][] grid = _wordSearch.make(words, 17, 11, 13);
-		assertEquals(grid.length, 17);
-		for (int x = 0; x < 2; x++) {
-			assertEquals(grid[x].length, 11);
-			for (int y = 0; y < 2; y++) {
-				assertEquals(grid[x][y].length, 13);
-			}
-		}
-	}
-
-	/* TODO: write more methods for both make and search. */
+	
 
 	@Before
 	public void setUp () {
