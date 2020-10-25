@@ -28,7 +28,27 @@ public class WordSearchTester {
 	 * Verifies that make returns null when it's impossible to construct a puzzle.
 	 */
 	public void testMakeImpossible () {
-		// TODO: implement me
+		final String[] words = new String[] {"Object", "Oriented", "Programming"};
+		final char[][][] grid = _wordSearch.make(words, 6, 4, 8);
+		assertNull(grid);
+	}
+
+	@Test
+	/**
+	 * Verifies that make returns null when it's impossible to construct a puzzle.
+	 */
+	public void testMakeImpossibleLarge () {
+		final String[] words = new String[] {"object", "oriented", "programming", "fan", "desk", "apple", "headphones", "binoculars", "calculator",
+		"java", "python", "c", "pencil", "pen", "picture", "orange", "id", "banana", "color"};
+		final char[][][] grid = _wordSearch.make(words, 6, 4, 11);
+		for(char[][] g : grid)
+			System.out.println(Arrays.deepToString(g));
+//		System.out.println(Arrays.deepToString(_wordSearch.search(grid, "programming")));
+//		System.out.println(Arrays.deepToString(_wordSearch.search(grid, "headphones")));
+//		System.out.println(Arrays.deepToString(_wordSearch.search(grid, "binoculars")));
+//		System.out.println(Arrays.deepToString(_wordSearch.search(grid, "oriented")));
+
+		assertNotNull(grid);
 	}
 
 	@Test
