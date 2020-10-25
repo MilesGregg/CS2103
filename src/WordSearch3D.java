@@ -220,10 +220,9 @@ public class WordSearch3D {
 		int i1 = i + xdir * (word.length() - 1);
 		int j1 = j + ydir * (word.length() - 1);
 		int k1 = k + zdir * (word.length() - 1);
-		if(i1 < 0 || i1 >= grid.length) return false;
-		if(j1 < 0 || j1 >= grid[0].length) return false;
-		if(k1 < 0 || k1 >= grid[0][0].length) return false;
-		return true;
+		return !((i1 < 0 || i1 >= grid.length) ||
+				(j1 < 0 || j1 >= grid[0].length) ||
+				(k1 < 0 || k1 >= grid[0][0].length));
 	}
 
 	/**
@@ -264,7 +263,9 @@ public class WordSearch3D {
 		char[][][] grid = new char[sizeX][sizeY][sizeX];
 
 		for (int i = 0; i < words.length; i++) {
-			System.out.println("count: " + i);
+			final Random rng = new Random();
+			final char randomLetter = (char) (rng.nextInt(26) + 'a');
+			//final int randomPosition = rng.nextInt(N);
 		}
 
 		return new char[][][]{
