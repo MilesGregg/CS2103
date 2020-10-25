@@ -18,6 +18,7 @@ public class WordSearchTester {
 		// Solution is either java or avaj
 		final char[][][] grid = _wordSearch.make(words, 1, 1, 4);
 		final char[] row = grid[0][0];
+		System.out.println(Arrays.toString(grid[0][0]));
 		assertTrue((row[0] == 'j' && row[1] == 'a' && row[2] == 'v' && row[3] == 'a') ||
 		           (row[3] == 'j' && row[2] == 'a' && row[1] == 'v' && row[0] == 'a'));
 	}
