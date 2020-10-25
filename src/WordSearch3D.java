@@ -118,7 +118,6 @@ public class WordSearch3D {
 								System.out.println("Current x checking: " + xDir);
 								System.out.println("Current y checking: " + yDir);
 								System.out.println("Current z checking: " + zDir);
-								System.out.println("WTF: " + grid[zDir][xDir][yDir]);
 
 								if (grid[zDir][xDir][yDir] != word.charAt(i)) {
 									System.out.println("HERE");
@@ -159,10 +158,10 @@ public class WordSearch3D {
 	 */
 	private ArrayList<int[]> makeVectors(){
 		ArrayList<int[]> o = new ArrayList<>();
-		for(int i = -1; i<=1; i++){
+		for(int i = -1; i <= 1; i++){
 			for(int j = -1; j <= 1; j++){
 				for(int k = -1; k <= 1; k++){
-					if(i==0 && j==0 && k==0) continue;
+					if(i == 0 && j == 0 && k == 0) continue;
 					o.add(new int[] {i, j, k});
 				}
 			}
@@ -188,7 +187,7 @@ public class WordSearch3D {
 		int zdir = vector[2];
 		StringBuilder newWord = new StringBuilder();
 		for(int n = 0; n < word.length(); n++){
-			char ch = grid[i + xdir*n][j+ydir*n][k+zdir*n];
+			char ch = grid[i + xdir * n][j + ydir * n][k + zdir * n];
 			newWord.append(ch);
 		}
 		//	System.out.println(newWord);
