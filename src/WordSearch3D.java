@@ -156,7 +156,7 @@ public class WordSearch3D {
 	 * between -1 and 1, and all 3 components cannot be zero (total of 26 vectors)
 	 * @return the list of vectors
 	 */
-	private ArrayList<int[]> makeVectors(){
+	private static ArrayList<int[]> makeVectors(){
 		ArrayList<int[]> o = new ArrayList<>();
 		for(int i = -1; i <= 1; i++){
 			for(int j = -1; j <= 1; j++){
@@ -259,12 +259,29 @@ public class WordSearch3D {
 	 */
 	public char[][][] make (String[] words, int sizeX, int sizeY, int sizeZ) {
 		// TODO: implement me
-		char[][][] grid = new char[sizeX][sizeY][sizeX];
+		char[][][] grid = new char[sizeZ][sizeY][sizeX];
 
 		for (int i = 0; i < words.length; i++) {
 			final Random rng = new Random();
 			final char randomLetter = (char) (rng.nextInt(26) + 'a');
-			//final int randomPosition = rng.nextInt(N);
+
+			int randomX = rng.nextInt(sizeX);
+			int randomY = rng.nextInt(sizeY);
+			int randomZ = rng.nextInt(sizeZ);
+
+			System.out.println("Random x: " + randomX);
+			System.out.println("Random y: " + randomY);
+			System.out.println("Random z: " + randomZ);
+
+			ArrayList<int[]> vectors = makeVectors();
+
+			final int randomPosition = rng.nextInt(26);
+			int[] randomVector = vectors.get(randomPosition);
+
+
+			//System.out.println(randomPosition);
+			//System.out.println(Arrays.toString(vectors.get(randomPosition)));
+
 		}
 
 		return new char[][][]{
@@ -377,7 +394,7 @@ public class WordSearch3D {
 						{'a', 'a', 'x', 'a'}
 				}
 		};
-		System.out.println(Arrays.deepToString(wordSearch.search(test, "oo")));
+		//System.out.println(Arrays.deepToString(wordSearch.search(test, "oo")));
 
 		final char[][][] grid = new char[][][] {
 				{
@@ -389,6 +406,6 @@ public class WordSearch3D {
 		//System.out.println(grid[0][1][0]);
 		//wordSearch.search(grid, "no");
 
-		//wordSearch.make(new String[] {"apple", "orange"}, 10, 10, 10);
+		wordSearch.make(new String[] {"apple", "orange"}, 10, 10, 10);
 	}
 }
