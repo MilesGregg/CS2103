@@ -49,6 +49,41 @@ public class WordSearchTester {
 	}
 
 	@Test
+	public void testSearchAdvancedDepth() {
+		final char[][][] grid = {
+				{
+						{'a', 'a', 'a', 'a'},
+						{'b', 'a', 'a', 'a'},
+						{'a', 'a', 'a', 'a'}
+				},
+				{
+						{'a', 'a', 'a', 'a'},
+						{'a', 'a', 'a', 'a'},
+						{'a', 'a', 'a', 'a'}
+				},
+				{
+						{'a', 'a', 'a', 'a'},
+						{'l', 'a', 'a', 'a'},
+						{'a', 'a', 'a', 'a'}
+				}
+		};
+
+		final int[][] location = _wordSearch.search(grid, "bal");
+		int[][] expectedPos = {{0, 1, 0}, {1, 1, 0}, {2, 1, 0}};
+		assertNotNull(location);
+		assertArrayEquals(expectedPos, location);
+		assertEquals(location[0][0], 0);
+		assertEquals(location[0][1], 1);
+		assertEquals(location[0][2], 0);
+		assertEquals(location[1][0], 1);
+		assertEquals(location[1][1], 1);
+		assertEquals(location[1][2], 0);
+		assertEquals(location[2][0], 2);
+		assertEquals(location[2][1], 1);
+		assertEquals(location[2][2], 0);
+	}
+
+	@Test
 	/**
 	 * Verifies that make can generate a grid when it's *necessary* for words to share
 	 * some common letter locations.

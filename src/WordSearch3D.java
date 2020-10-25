@@ -370,12 +370,12 @@ public class WordSearch3D {
 						{'a', 'a', 'a', 'a'},
 						{'o', 'a', 'a', 'a'},
 						{'a', 'a', 'a', 'a'}
-				}/*,
+				},
 				{
 						{'a', 'a', 'a', 'a'},
 						{'a', 'a', 'a', 'a'},
 						{'a', 'a', 'x', 'a'}
-				}*/
+				}
 		};
 		System.out.println(Arrays.deepToString(wordSearch.search(test, "oo")));
 
