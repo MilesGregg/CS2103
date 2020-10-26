@@ -249,7 +249,10 @@ public class WordSearch3D {
 
 	private char[][][] insert(char[][][] grid, int[] vector, int startX, int startY, int startZ, String word){
 		for(int i = 0; i < word.length(); i++){
-			grid[startX + vector[0]*i][startY + vector[1]*i][startZ + vector[2]*i] = word.charAt(i);
+			//grid[startX + vector[0]*i][startY + vector[1]*i][startZ + vector[2]*i] = word.charAt(i);
+			grid[startZ + i*vector[0]]
+					[startY + i*vector[1]]
+					[startX + i*vector[2]] = word.charAt(i);
 		}
 		return grid;
 	}
@@ -273,43 +276,41 @@ public class WordSearch3D {
 		sizeZ = x;
 		sizeX = z;
 		char[][][] grid = new char[sizeZ][sizeY][sizeX];
-
 		ArrayList<int[]> vectors = makeVectors();
 		final Random rng = new Random();
+
 		for(int _counter = 0; _counter < 1000; _counter++) {
 			grid = new char[sizeZ][sizeY][sizeX];
 			for (int i = 0; i < words.length; i++) {
-				int randomX = rng.nextInt(sizeX);
-				int randomY = rng.nextInt(sizeY);
-				int randomZ = rng.nextInt(sizeZ);
 				for (int k = 0; k < 1000; k++) {
+					int randomX = rng.nextInt(sizeX);
+					int randomY = rng.nextInt(sizeY);
+					int randomZ = rng.nextInt(sizeZ);
+
 					final int randomPosition = rng.nextInt(26);
 					int[] randomVector = vectors.get(randomPosition);
 					if (!valid(randomVector, grid, words[i], randomZ, randomY, randomX)) continue;
 					boolean possible = true;
 					for (int t = 0; t < words[i].length(); t++) {
 						char ch = grid[randomZ + t * randomVector[0]][randomY + t * randomVector[1]][randomX + t * randomVector[2]];
-						if(Character.isLetter(ch)) {
-							if (ch != words[i].charAt(t)) {
-								possible = false;
-								break;
-							}
+						if(Character.isLetter(ch) && ch != words[i].charAt(t)) {
+							possible = false;
+							break;
 						}
 					}
-					if(possible) {
-						grid = insert(grid, randomVector, randomZ, randomY, randomX, words[i]);
+					if (possible) {
+						grid = insert(grid, randomVector, randomX, randomY, randomZ, words[i]);
 						if (i == words.length - 1) {
 							for (int i1 = 0; i1 < sizeZ; i1++) {
 								for (int j = 0; j < sizeY; j++) {
 									for (int k1 = 0; k1 < sizeX; k1++) {
-										continue;
-										//	if((!Character.isLetter(grid[i1][j][k1])))
-										//	grid[i1][j][k1] =  (char) (rng.nextInt(26) + 'a');
+										if((!Character.isLetter(grid[i1][j][k1])))
+											grid[i1][j][k1] =  (char) (rng.nextInt(26) + 'a');
 									}
 								}
 							}
 							return grid;
-						}
+						} else break;
 					}
 				}
 			}
@@ -430,6 +431,13 @@ public class WordSearch3D {
 		};
 
 
-		wordSearch.make(new String[] {"apple", "orange"}, 10, 10, 10);
+		char[][][] test3 = wordSearch.make(new String[] {"apple", "orange"}, 6, 7, 3);
+		/*for(char[][] g : test3) {
+			for (char[] t : g)
+				System.out.println(Arrays.deepToString(g));
+		}*/
+		System.out.println(test3.length);
+		System.out.println(test3[0].length);
+		System.out.println(test3[0][0].length);
 	}
 }

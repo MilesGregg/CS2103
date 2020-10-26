@@ -43,10 +43,16 @@ public class WordSearchTester {
 		final char[][][] grid = _wordSearch.make(words, 6, 4, 11);
 		for(char[][] g : grid)
 			System.out.println(Arrays.deepToString(g));
-		System.out.println(Arrays.deepToString(_wordSearch.search(grid, "python")));
-		System.out.println(Arrays.deepToString(_wordSearch.search(grid, "desk")));
-		System.out.println(Arrays.deepToString(_wordSearch.search(grid, "apple")));
-		System.out.println(Arrays.deepToString(_wordSearch.search(grid, "id")));
+
+		for (String word : words) {
+			System.out.println("Word: "+ word);
+			System.out.println(Arrays.deepToString(_wordSearch.search(grid, word)));
+		}
+
+//		System.out.println(Arrays.deepToString(_wordSearch.search(grid, "python")));
+//		System.out.println(Arrays.deepToString(_wordSearch.search(grid, "desk")));
+//		System.out.println(Arrays.deepToString(_wordSearch.search(grid, "apple")));
+//		System.out.println(Arrays.deepToString(_wordSearch.search(grid, "id")));
 
 //		System.out.println(Arrays.deepToString(_wordSearch.search(grid, "programming")));
 //		System.out.println(Arrays.deepToString(_wordSearch.search(grid, "headphones")));
@@ -82,7 +88,8 @@ public class WordSearchTester {
 	public void testMakeWithIntersection () {
 		final String[] words = new String[] { "amc", "dmf", "gmi", "jml", "nmo", "pmr", "smu", "vmx", "yma", "zmq" };
 		final char[][][] grid = _wordSearch.make(words, 3, 3, 3);
-		System.out.println(Arrays.deepToString(grid));
+		for(char[][] g : grid)
+			System.out.println(Arrays.deepToString(g));
 		assertNotNull(grid);
 	}
 
