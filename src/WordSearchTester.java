@@ -27,7 +27,7 @@ public class WordSearchTester {
 	/**
 	 * Verifies that make returns null when it's impossible to construct a puzzle.
 	 */
-	public void testMakeImpossible () {
+	public void testMakeImpossibleBadSize () {
 		final String[] words = new String[] {"Object", "Oriented", "Programming"};
 		final char[][][] grid = _wordSearch.make(words, 6, 4, 8);
 		assertNull(grid);
@@ -40,15 +40,14 @@ public class WordSearchTester {
 	public void testMakeImpossibleLarge () {
 		final String[] words = new String[] {"object", "oriented", "programming", "fan", "desk", "apple", "headphones", "binoculars", "calculator",
 		"java", "python", "c", "pencil", "pen", "picture", "orange", "id", "banana", "color"};
-		final char[][][] grid = _wordSearch.make(words, 6, 4, 11);
-		for(char[][] g : grid)
-			System.out.println(Arrays.deepToString(g));
+		final char[][][] grid = _wordSearch.make(words, 6, 14, 11);
+
 //		System.out.println(Arrays.deepToString(_wordSearch.search(grid, "programming")));
 //		System.out.println(Arrays.deepToString(_wordSearch.search(grid, "headphones")));
 //		System.out.println(Arrays.deepToString(_wordSearch.search(grid, "binoculars")));
 //		System.out.println(Arrays.deepToString(_wordSearch.search(grid, "oriented")));
 
-		assertNotNull(grid);
+		assertNull(grid);
 	}
 
 	@Test
@@ -77,6 +76,7 @@ public class WordSearchTester {
 	public void testMakeWithIntersection () {
 		final String[] words = new String[] { "amc", "dmf", "gmi", "jml", "nmo", "pmr", "smu", "vmx", "yma", "zmq" };
 		final char[][][] grid = _wordSearch.make(words, 3, 3, 3);
+		System.out.println(Arrays.deepToString(grid));
 		assertNotNull(grid);
 	}
 

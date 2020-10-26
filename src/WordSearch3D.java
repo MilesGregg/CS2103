@@ -247,11 +247,10 @@ public class WordSearch3D {
 		return null;
 	}
 
-	private char[][][] insert(char[][][] grid, int[] vector, int startX, int startY, int startZ, String word){
+	private void insert(char[][][] grid, int[] vector, int startX, int startY, int startZ, String word){
 		for(int i = 0; i < word.length(); i++){
 			grid[startX + vector[0]*i][startY + vector[1]*i][startZ + vector[2]*i] = word.charAt(i);
 		}
-		return grid;
 	}
 
 	/**
@@ -276,14 +275,13 @@ public class WordSearch3D {
 
 		ArrayList<int[]> vectors = makeVectors();
 		final Random rng = new Random();
-		for(int _counter = 0; _counter < 1000; _counter++) {
+		for(int _c = 0; _c < 1000; _c ++) {
 			for (int i = 0; i < words.length; i++) {
-
-				int randomX = rng.nextInt(sizeX);
-				int randomY = rng.nextInt(sizeY);
-				int randomZ = rng.nextInt(sizeZ);
-
 				for (int k = 0; k < 1000; k++) {
+					int randomX = rng.nextInt(sizeX);
+					int randomY = rng.nextInt(sizeY);
+					int randomZ = rng.nextInt(sizeZ);
+
 					final int randomPosition = rng.nextInt(26);
 					int[] randomVector = vectors.get(randomPosition);
 					if (!valid(randomVector, grid, words[i], randomZ, randomY, randomX)) continue;
@@ -298,7 +296,7 @@ public class WordSearch3D {
 						}
 					}
 					if(possible) {
-						grid = insert(grid, randomVector, randomZ, randomY, randomX, words[i]);
+						insert(grid, randomVector, randomZ, randomY, randomX, words[i]);
 						if (i == words.length - 1) {
 							for (int i1 = 0; i1 < sizeZ; i1++) {
 								for (int j = 0; j < sizeY; j++) {
@@ -314,6 +312,7 @@ public class WordSearch3D {
 					}
 				}
 			}
+			break;
 		}
 
 		return null;
