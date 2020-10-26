@@ -247,10 +247,11 @@ public class WordSearch3D {
 		return null;
 	}
 
-	private void insert(char[][][] grid, int[] vector, int startX, int startY, int startZ, String word){
+	private char[][][] insert(char[][][] grid, int[] vector, int startX, int startY, int startZ, String word){
 		for(int i = 0; i < word.length(); i++){
 			grid[startX + vector[0]*i][startY + vector[1]*i][startZ + vector[2]*i] = word.charAt(i);
 		}
+		return grid;
 	}
 
 	/**
@@ -296,7 +297,7 @@ public class WordSearch3D {
 						}
 					}
 					if(possible) {
-						insert(grid, randomVector, randomZ, randomY, randomX, words[i]);
+						grid = insert(grid, randomVector, randomZ, randomY, randomX, words[i]);
 						if (i == words.length - 1) {
 							for (int i1 = 0; i1 < sizeZ; i1++) {
 								for (int j = 0; j < sizeY; j++) {
