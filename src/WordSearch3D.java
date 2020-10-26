@@ -312,7 +312,7 @@ public class WordSearch3D {
 					}
 				}
 			}
-			break;
+
 		}
 
 		return null;
