@@ -31,125 +31,8 @@ public class WordSearch3D {
 	 * @return If the grid contains the
 	 * word, then the method returns a list of the (3-d) locations of its letters; if not,
 	 */
-	/*public int[][] search (char[][][] grid, String word) {
-		// TODO: implement me
-		int[] xPos = { -1, -1, -1, 0, 0, 1, 1, 1, 0 };
-		int[] yPos = { -1, 0, 1, -1, 1, -1, 0, 1, 0 };
-		int[] zPos = { 1, 0, -1 };
 
-		int xLen = grid[0][0].length;
-		int yLen = grid[0].length;
-		int zLen = grid.length;
 
-		System.out.println("xLen: " + xLen + "\nyLen: " + yLen + "\nzLen: " + zLen);
-
-		int len = word.length();
-
-		for (int y = 0; y < yLen; y++) {
-			for (int x = 0; x < xLen; x++) {
-				for (int z = 0; z < zLen; z++) {
-					System.out.println("letter: " + grid[z][y][x]);
-					if (grid[z][y][x] != word.charAt(0)) {
-						continue;
-					}
-					int[] firstFound = new int[] { z, y, x };
-					System.out.println("First found: " + Arrays.toString(firstFound));
-					System.out.println("First Letter found: " + word.charAt(0));
-
-					for (int j = 0; j < 3; j++) {
-						for (int dir = 0; dir < 9; dir++) {
-							int i;
-							int xDir = x + xPos[dir];
-							int yDir = y + yPos[dir];
-							int zDir = zPos[j];
-
-							//System.out.println("Current x checking: " + xDir);
-							//System.out.println("Current y checking: " + yDir);
-							//System.out.println("Current z checking: " + zDir);
-
-							// first letter is found so lets look in different direction and keep looking if all the letters are there
-							for (i = 1; i < len; i++) {
-								// out of bounds!
-								if (xDir >= xLen || xDir < 0 || yDir >= yLen || yDir < 0 || zDir >= zLen || zDir < 0) {
-									//System.out.println("out of bounds!");
-									break;
-								}
-
-								System.out.println("next letter: " + grid[zDir][yDir][xDir]);
-
-								if (grid[zDir][yDir][xDir] != word.charAt(i))
-									break;
-
-								if (word.charAt(word.length()-1) == i) {
-									xDir += xPos[dir];
-									yDir += yPos[dir];
-								}
-								//zDir += zPos[j];
-							}
-
-							if (i == len) {
-								int[] lastFound = new int[] { zDir, yDir, xDir };
-								System.out.println("Last found: " + Arrays.toString(lastFound));
-								System.out.println("FOUND!");
-
-								int[][] test = new int[][] { firstFound, lastFound };
-
-								System.out.println("Found pos: " + Arrays.deepToString(test));
-
-								return new int[][] { firstFound, lastFound };
-							}
-						}
-					}
-
-					/*for (int dir = 0; dir < 8; dir++) {
-						for (int j = 0; j < 3; j++) {
-							int i;
-							int xDir = x + xPos[dir];
-							int yDir = y + yPos[dir];
-							int zDir = z + zPos[j];
-
-							// first letter is checked so keep checking
-							for (i = 1; i < len; i++) {
-								// out of bounds!
-								if (xDir >= xLen || xDir < 0 || yDir >= yLen || yDir < 0 || zDir >= zLen || zDir < 0) {
-									break;
-								}
-
-								System.out.println("Current x checking: " + xDir);
-								System.out.println("Current y checking: " + yDir);
-								System.out.println("Current z checking: " + zDir);
-
-								if (grid[zDir][xDir][yDir] != word.charAt(i)) {
-									System.out.println("HERE");
-									break;
-								}
-
-								System.out.println("Before: " + xDir);
-								xDir += xPos[dir];
-								yDir += yPos[dir];
-								zDir += zPos[j];
-								System.out.println("After: " + xDir);
-							}
-
-							if (i == len) {
-								int[] lastFound = new int[] { xDir, yDir, zDir };
-								System.out.println("Last found: " + Arrays.toString(lastFound));
-								System.out.println("FOUND!");
-
-								int[][] test = new int[][] { firstFound, lastFound };
-
-								System.out.println("Found pos: " + Arrays.deepToString(test));
-
-								return new int[][] { firstFound, lastFound };
-							}
-						}
-					}*/
-				/*}
-			}
-		}
-
-		return null;
-	}*/
 
 	/**
 	 * Creates a list of 3-dimensional vectors where each component of each vector is
@@ -247,14 +130,13 @@ public class WordSearch3D {
 		return null;
 	}
 
-	private char[][][] insert(char[][][] grid, int[] vector, int startX, int startY, int startZ, String word){
+	private void insert(char[][][] grid, int[] vector, int startX, int startY, int startZ, String word){
 		for(int i = 0; i < word.length(); i++){
 			//grid[startX + vector[0]*i][startY + vector[1]*i][startZ + vector[2]*i] = word.charAt(i);
 			grid[startZ + i*vector[0]]
 					[startY + i*vector[1]]
 					[startX + i*vector[2]] = word.charAt(i);
 		}
-		return grid;
 	}
 
 	/**
@@ -275,7 +157,7 @@ public class WordSearch3D {
 		int z = sizeZ;
 		sizeZ = x;
 		sizeX = z;
-		char[][][] grid = new char[sizeZ][sizeY][sizeX];
+		char[][][] grid;
 		ArrayList<int[]> vectors = makeVectors();
 		final Random rng = new Random();
 
@@ -299,7 +181,7 @@ public class WordSearch3D {
 						}
 					}
 					if (possible) {
-						grid = insert(grid, randomVector, randomX, randomY, randomZ, words[i]);
+						insert(grid, randomVector, randomX, randomY, randomZ, words[i]);
 						if (i == words.length - 1) {
 							for (int i1 = 0; i1 < sizeZ; i1++) {
 								for (int j = 0; j < sizeY; j++) {
