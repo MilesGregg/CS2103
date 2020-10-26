@@ -43,10 +43,10 @@ public class WordSearchTester {
 		final char[][][] grid = _wordSearch.make(words, 6, 4, 11);
 		for(char[][] g : grid)
 			System.out.println(Arrays.deepToString(g));
-//		System.out.println(Arrays.deepToString(_wordSearch.search(grid, "programming")));
-//		System.out.println(Arrays.deepToString(_wordSearch.search(grid, "headphones")));
-//		System.out.println(Arrays.deepToString(_wordSearch.search(grid, "binoculars")));
-//		System.out.println(Arrays.deepToString(_wordSearch.search(grid, "oriented")));
+		System.out.println(Arrays.deepToString(_wordSearch.search(grid, "python")));
+		System.out.println(Arrays.deepToString(_wordSearch.search(grid, "desk")));
+		System.out.println(Arrays.deepToString(_wordSearch.search(grid, "apple")));
+		System.out.println(Arrays.deepToString(_wordSearch.search(grid, "id")));
 
 		assertNotNull(grid);
 	}

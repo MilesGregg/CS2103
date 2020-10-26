@@ -277,12 +277,11 @@ public class WordSearch3D {
 		ArrayList<int[]> vectors = makeVectors();
 		final Random rng = new Random();
 		for(int _counter = 0; _counter < 1000; _counter++) {
+			grid = new char[sizeZ][sizeY][sizeX];
 			for (int i = 0; i < words.length; i++) {
-
 				int randomX = rng.nextInt(sizeX);
 				int randomY = rng.nextInt(sizeY);
 				int randomZ = rng.nextInt(sizeZ);
-
 				for (int k = 0; k < 1000; k++) {
 					final int randomPosition = rng.nextInt(26);
 					int[] randomVector = vectors.get(randomPosition);
