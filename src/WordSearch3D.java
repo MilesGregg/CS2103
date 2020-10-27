@@ -6,7 +6,20 @@ import java.io.*;
  * Implements a 3-d word search puzzle program.
  */
 public class WordSearch3D {
+	// a list of all possible directions we can move in the 3d grid
+	private final static ArrayList<int[]> vectors = new ArrayList<>();
+
 	public WordSearch3D () {
+		// initialize vectors
+		for(int i = -1; i <= 1; i++){
+			for(int j = -1; j <= 1; j++){
+				for(int k = -1; k <= 1; k++){
+					// excludes the vector <0 0 0> because it has no direction
+					if(i == 0 && j == 0 && k == 0) continue;
+					vectors.add(new int[] {i, j, k});
+				}
+			}
+		}
 	}
 
 	/**
@@ -22,34 +35,6 @@ public class WordSearch3D {
 			locations[i] = search(grid, words[i]);
 		}
 		return locations;
-	}
-
-	/**
-	 * Searches for the specified word in the specified grid.
-	 * @param grid the grid of characters comprising the word search puzzle
-	 * @param word the word to search for
-	 * @return If the grid contains the
-	 * word, then the method returns a list of the (3-d) locations of its letters; if not,
-	 */
-
-
-
-	/**
-	 * Creates a list of 3-dimensional vectors where each component of each vector is
-	 * between -1 and 1, and all 3 components cannot be zero (total of 26 vectors)
-	 * @return the list of vectors
-	 */
-	private static ArrayList<int[]> makeVectors(){
-		ArrayList<int[]> o = new ArrayList<>();
-		for(int i = -1; i <= 1; i++){
-			for(int j = -1; j <= 1; j++){
-				for(int k = -1; k <= 1; k++){
-					if(i == 0 && j == 0 && k == 0) continue; // excludes the vector <0 0 0> because it has no direction
-					o.add(new int[] {i, j, k});
-				}
-			}
-		}
-		return o;
 	}
 
 	/**
@@ -69,18 +54,21 @@ public class WordSearch3D {
 		int ydir = vector[1];
 		int zdir = vector[2];
 		StringBuilder newWord = new StringBuilder();
+		// generates the word that would be formed if we go in that vector direction and the starting (x, y, z) position
 		for(int n = 0; n < word.length(); n++){
 			char ch = grid[i + xdir * n][j + ydir * n][k + zdir * n];
 			newWord.append(ch);
 		}
-
+		// checks if the new word matches the word we are searching for
 		if (newWord.toString().equals(word)) {
 			int[][] out = new int[word.length()][3];
 			for(int c = 0; c < word.length(); c++){
 				out[c] = new int[] {i + xdir * c, j+ydir * c, k+zdir * c};
 			}
+			// return a list of (x, y, z) positions for each character in the word
 			return out;
 		}
+		// if we can't find the word then return null
 		return null;
 	}
 
@@ -102,6 +90,7 @@ public class WordSearch3D {
 		int i1 = i + xdir * (word.length() - 1);
 		int j1 = j + ydir * (word.length() - 1);
 		int k1 = k + zdir * (word.length() - 1);
+		// makes sure all ending positions are in the grid
 		return !((i1 < 0 || i1 >= grid.length) ||
 				(j1 < 0 || j1 >= grid[0].length) ||
 				(k1 < 0 || k1 >= grid[0][0].length));
@@ -115,27 +104,58 @@ public class WordSearch3D {
 	 * word, then the method returns a list of the (3-d) locations of its letters; if not,
 	 */
 	public int[][] search (char[][][] grid, String word) {
-		ArrayList<int[]> vectors = makeVectors();
-		for(int i = 0; i < grid.length; i++){
-			for(int j = 0; j < grid[0].length; j++){
-				for(int k = 0; k < grid[0][0].length; k++){
-					for(int[] item : vectors){
+		// loops every starting position in the 3d grid
+		for(int i = 0; i < grid.length; i++) {
+			for(int j = 0; j < grid[0].length; j++) {
+				for(int k = 0; k < grid[0][0].length; k++) {
+					// loops every vector direction at each starting position
+					for(int[] item : vectors) {
+						// checks if the vector goes out bounds
 						if(!valid(item, grid, word, i, j, k)) continue;
+						// checks the word in the grid makes the one we are looking for
 						int[][] out = checkVector(grid, word, item, i, j, k);
+						// output position if the word matches
 						if(out != null) return out;
 					}
 				}
 			}
 		}
+		// return null if it can't find the word
 		return null;
 	}
 
-	private void insert(char[][][] grid, int[] vector, int startX, int startY, int startZ, String word){
-		for(int i = 0; i < word.length(); i++){
-			//grid[startX + vector[0]*i][startY + vector[1]*i][startZ + vector[2]*i] = word.charAt(i);
-			grid[startZ + i*vector[0]]
-					[startY + i*vector[1]]
-					[startX + i*vector[2]] = word.charAt(i);
+	/**
+	 * Inserts word into grid given start pos (x, y, z) and goes in vector direction.
+	 * @param grid - 3d grid characters
+	 * @param vector - vector direction where the word should go
+	 * @param startX - starting x direction for the work
+	 * @param startY - starting y direction for the work
+	 * @param startZ - starting z direction for the work
+	 * @param word - word that needs to be inserted
+	 */
+	private void insert (char[][][] grid, int[] vector, int startX, int startY, int startZ, String word) {
+		for(int i = 0; i < word.length(); i++) {
+			// inserts each letter into their certian position of the 3d grid
+			grid[startX + i*vector[0]][startY + i*vector[1]][startZ + i*vector[2]] = word.charAt(i);
+		}
+	}
+
+	/**
+	 * Add random chars to the rest of the grid once it is filled with words
+	 * @param grid - 3d grid of characters
+	 */
+	private void addRandom (char[][][] grid) {
+		final Random rng = new Random();
+
+		for (int i1 = 0; i1 < grid.length; i1++) {
+			for (int j = 0; j < grid[0].length; j++) {
+				for (int k1 = 0; k1 < grid[0][0].length; k1++) {
+					// checks to make sure there is no letter there
+					if((!Character.isLetter(grid[i1][j][k1])))
+						// inserts a random character into that grid 3d position
+						grid[i1][j][k1] =  (char) (rng.nextInt(26) + 'a');
+				}
+			}
 		}
 	}
 
@@ -150,55 +170,47 @@ public class WordSearch3D {
 	 * no satisfying grid could be found.
 	 */
 	public char[][][] make (String[] words, int sizeX, int sizeY, int sizeZ) {
-		// TODO: implement me
-
-		int x = sizeX;
-		int y = sizeY;
-		int z = sizeZ;
-		sizeZ = x;
-		sizeX = z;
 		char[][][] grid;
-		ArrayList<int[]> vectors = makeVectors();
 		final Random rng = new Random();
 
 		for(int _counter = 0; _counter < 1000; _counter++) {
-			grid = new char[sizeZ][sizeY][sizeX];
+			grid = new char[sizeX][sizeY][sizeZ];
 			for (int i = 0; i < words.length; i++) {
 				for (int k = 0; k < 1000; k++) {
+					// generates a random start position for the word
 					int randomX = rng.nextInt(sizeX);
 					int randomY = rng.nextInt(sizeY);
 					int randomZ = rng.nextInt(sizeZ);
 
+					// generates a random vector direction to go
 					final int randomPosition = rng.nextInt(26);
 					int[] randomVector = vectors.get(randomPosition);
-					if (!valid(randomVector, grid, words[i], randomZ, randomY, randomX)) continue;
+
+					// checks to make sure the word will go out of bounds if placed at that position and direction
+					if (!valid(randomVector, grid, words[i], randomX, randomY, randomZ)) continue;
+					// checks to make sure it won't overwrite any existing words
 					boolean possible = true;
 					for (int t = 0; t < words[i].length(); t++) {
-						char ch = grid[randomZ + t * randomVector[0]][randomY + t * randomVector[1]][randomX + t * randomVector[2]];
+						char ch = grid[randomX + t * randomVector[0]][randomY + t * randomVector[1]][randomZ + t * randomVector[2]];
 						if(Character.isLetter(ch) && ch != words[i].charAt(t)) {
 							possible = false;
 							break;
 						}
 					}
+					// if the word can be placed than place that word
 					if (possible) {
 						insert(grid, randomVector, randomX, randomY, randomZ, words[i]);
 						if (i == words.length - 1) {
-							for (int i1 = 0; i1 < sizeZ; i1++) {
-								for (int j = 0; j < sizeY; j++) {
-									for (int k1 = 0; k1 < sizeX; k1++) {
-										if((!Character.isLetter(grid[i1][j][k1])))
-											grid[i1][j][k1] =  (char) (rng.nextInt(26) + 'a');
-									}
-								}
-							}
+							// add random characters in the 3d grid
+							addRandom(grid);
+							// then return the grid
 							return grid;
 						} else break;
 					}
 				}
 			}
-
 		}
-
+		// return null if the grid couldn't be made
 		return null;
 	}
 
