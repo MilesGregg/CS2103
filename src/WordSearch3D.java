@@ -49,7 +49,7 @@ public class WordSearch3D {
 	 * @return a list of the coordinates for each point in the word if the word can be found with
 	 * the initial conditions specified, null otherwise
 	 */
-	private int[][] checkVector(char[][][] grid, String word, int[] vector, int i, int j, int k){
+	private int[][] checkVector (char[][][] grid, String word, int[] vector, int i, int j, int k){
 		int xdir = vector[0];
 		int ydir = vector[1];
 		int zdir = vector[2];
@@ -83,7 +83,7 @@ public class WordSearch3D {
 	 * @param k the z-component of the current position in the grid
 	 * @return true if the "word" can be searched for without going out of bounds, false otherwise
 	 */
-	private boolean valid(int[] vector, char[][][] grid, String word, int i, int j, int k){
+	private boolean valid (int[] vector, char[][][] grid, String word, int i, int j, int k){
 		int xdir = vector[0];
 		int ydir = vector[1];
 		int zdir = vector[2];
@@ -287,51 +287,12 @@ public class WordSearch3D {
 	 */
 	public static void main (String[] args) {
 		final WordSearch3D wordSearch = new WordSearch3D();
-		/*final String[] words = new String[] { "apple", "orange", "pear", "peach", "durian", "lemon", "lime", "jackfruit", "plum", "grape", "apricot", "blueberry", "tangerine", "coconut", "mango", "lychee", "guava", "strawberry", "kiwi", "kumquat", "persimmon", "papaya", "longan", "eggplant", "cucumber", "tomato", "zucchini", "olive", "pea", "pumpkin", "cherry", "date", "nectarine", "breadfruit", "sapodilla", "rowan", "quince", "toyon", "sorb", "medlar" };
+		final String[] words = new String[] { "apple", "orange", "pear", "peach", "durian", "lemon", "lime", "jackfruit", "plum", "grape", "apricot", "blueberry", "tangerine", "coconut", "mango", "lychee", "guava", "strawberry", "kiwi", "kumquat", "persimmon", "papaya", "longan", "eggplant", "cucumber", "tomato", "zucchini", "olive", "pea", "pumpkin", "cherry", "date", "nectarine", "breadfruit", "sapodilla", "rowan", "quince", "toyon", "sorb", "medlar" };
 		final int xSize = 10, ySize = 10, zSize = 10;
 		final char[][][] grid = wordSearch.make(words, xSize, ySize, zSize);
 		exportGrid(grid, "grid.txt");
 
 		final int[][][] locations = wordSearch.searchForAll(grid, words);
-		exportLocations(locations, "locations.txt");*/
-
-
-
-
-		char[][][] test = {
-				{
-						{'a', 'a', 'a', 'a'},
-						{'o', 'a', 'a', 'a'},
-						{'a', 'a', 'a', 'a'}
-				},
-				{
-						{'a', 'a', 'a', 'a'},
-						{'o', 'a', 'a', 'a'},
-						{'a', 'a', 'a', 'a'}
-				},
-				{
-						{'a', 'a', 'a', 'a'},
-						{'a', 'a', 'a', 'a'},
-						{'a', 'a', 'x', 'a'}
-				}
-		};
-
-		final char[][][] grid = new char[][][] {
-				{
-					{'m', 'n', 'o', 'p'},
-						{'p', 'r', 's', 't'},
-						{'u', 'v', 'w', 'x'},
-				}
-		};
-
-
-		char[][][] test3 = wordSearch.make(new String[] {"apple", "orange"}, 6, 7, 3);
-		/*for(char[][] g : test3) {
-			for (char[] t : g)
-				System.out.println(Arrays.deepToString(g));
-		}*/
-		System.out.println(test3.length);
-		System.out.println(test3[0].length);
-		System.out.println(test3[0][0].length);
+		exportLocations(locations, "locations.txt");
 	}
 }
