@@ -80,23 +80,26 @@ public class WordSearchTester {
 		assertEquals(location[1][2], 2);
 	}
 
-	@Test
 	/**
 	 * Verifies that make can generate a grid when it's *necessary* for words to share
 	 * some common letter locations.
 	 */
+	@Test
 	public void testMakeWithIntersection () {
 		final String[] words = new String[] { "amc", "dmf", "gmi", "jml", "nmo", "pmr", "smu", "vmx", "yma", "zmq" };
 		final char[][][] grid = _wordSearch.make(words, 3, 3, 3);
-		for(char[][] g : grid)
-			System.out.println(Arrays.deepToString(g));
+		int[][][] posns = _wordSearch.searchForAll(grid, words);
+		assertNotNull(posns);
+		for(int[][] posn : posns){
+			assertNotNull(posn);
+		}
 		assertNotNull(grid);
 	}
 
-	@Test
 	/**
 	 * Verifies that make returns a grid of the appropriate size.
 	 */
+	@Test
 	public void testMakeGridSize () {
 		final String[] words = new String[] { "at", "it", "ix", "ax" };
 		final char[][][] grid = _wordSearch.make(words, 17, 11, 13);
@@ -111,6 +114,68 @@ public class WordSearchTester {
 
 	/* TODO: write more methods for both make and search. */
 
+	@Test
+	public void testSearch3d () {
+		// Note: this grid is 3x4x2 in size
+		final char[][][] grid = new char[][][]  {
+				{
+					{'a', 'a'},
+					{'a', 'a'},
+					{'a', 'a'},
+					{'a', 'a'}
+				},
+				{
+					{'o', 'a'},
+					{'a', 'a'},
+					{'a', 'a'},
+					{'a', 'a'}
+				},
+				{
+					{'a', 'a'},
+					{'a', 'x'},
+					{'a', 'a'},
+					{'a', 'a'}
+				}
+		};
+
+
+		final int[][] location = _wordSearch.search(grid, "ox");
+		assertNotNull(location);
+		assertEquals(location[0][0], 1);
+		assertEquals(location[0][1], 0);
+		assertEquals(location[0][2], 0);
+		assertEquals(location[1][0], 2);
+		assertEquals(location[1][1], 1);
+		assertEquals(location[1][2], 1);
+	}
+
+	@Test
+	public void testSearch3dNull () {
+		// Note: this grid is 3x4x2 in size
+		final char[][][] grid = new char[][][]  {
+				{
+						{'a', 'a'},
+						{'a', 'a'},
+						{'a', 'a'},
+						{'a', 'a'}
+				},
+				{
+						{'o', 'a'},
+						{'a', 'a'},
+						{'a', 'a'},
+						{'a', 'a'}
+				},
+				{
+						{'a', 'a'},
+						{'a', 'x'},
+						{'a', 'a'},
+						{'a', 'a'}
+				}
+		};
+
+		final int[][] location = _wordSearch.search(grid, "axe");
+		assertNull(location);
+	}
 
 	@Test
 	public void testSearchAdvancedDepth() {
