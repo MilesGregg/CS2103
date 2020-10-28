@@ -223,8 +223,8 @@ public class WordSearch3D {
 	public static void exportLocations (int[][][] locations, String filename) {
 		// First determine how many non-null locations we have
 		int numLocations = 0;
-		for (int i = 0; i < locations.length; i++) {
-			if (locations[i] != null) {
+		for (int[][] location : locations) {
+			if (location != null) {
 				numLocations++;
 			}
 		}
