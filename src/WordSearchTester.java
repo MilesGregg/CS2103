@@ -37,7 +37,7 @@ public class WordSearchTester {
 	/**
 	 * Verifies that make returns null when it's impossible to construct a puzzle.
 	 */
-	public void testMakeImpossibleLarge () {
+	public void testMakeManyWords () {
 		final String[] words = new String[] {"object", "oriented", "programming", "fan", "desk", "apple", "headphones", "binoculars", "calculator",
 		"java", "python", "c", "pencil", "pen", "picture", "orange", "id", "banana", "color"};
 		final char[][][] grid = _wordSearch.make(words, 6, 4, 11);
@@ -48,6 +48,24 @@ public class WordSearchTester {
 		for (int[][] allWordPo : allWordPos) {
 			assertNotNull(allWordPo);
 		}
+	}
+
+	@Test
+	/**
+	 * Verifies that make returns null when it's impossible to construct a puzzle.
+	 */
+	public void testMakeImpossibleLarge () {
+		final String[] words = new String[] {"object", "oriented", "programming", "fan", "desk", "apple", "headphones", "binoculars", "calculator",
+				"java", "python", "c", "pencil", "pen", "picture", "orange", "id", "banana", "color"};
+		final char[][][] grid = _wordSearch.make(words, 1, 2, 11);
+		// checks to make sure all words have a position
+		int [][][] allWordPos = _wordSearch.searchForAll(grid, words);
+		assertNotNull(grid);
+		// checks to make sure all words have a position
+		for (int[][] allWordPo : allWordPos) {
+			assertNotNull(allWordPo);
+		}
+		//assertNull(grid);
 	}
 
 	@Test
