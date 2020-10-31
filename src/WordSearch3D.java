@@ -180,9 +180,11 @@ public class WordSearch3D {
 		for (int _counter = 0; _counter < 1000; _counter++) {
 			grid = new char[sizeX][sizeY][sizeZ];
 
-			wordloop:
+			//wordloop:
 			for (int i = 0; i < words.length; i++) {
-				for (int k = 0; k < 1000; k++) {
+				int wordLoop;
+				System.out.println(words[i]);
+				for (wordLoop = 0; wordLoop < 1000; wordLoop++) {
 					// generates a random start position for the word
 					int randomX = rng.nextInt(sizeX);
 					int randomY = rng.nextInt(sizeY);
@@ -206,7 +208,7 @@ public class WordSearch3D {
 					// if the word can be placed than place that word
 					if (possible) {
 						insert(grid, randomVector, randomX, randomY, randomZ, words[i]);
-						System.out.println(words[i]);
+
 						if (i == words.length - 1) {
 							// add random characters in the 3d grid
 							//addRandom(grid);
@@ -215,7 +217,12 @@ public class WordSearch3D {
 						}
 						else break;
 					}
-					if(k == 999) break wordloop;
+					//if(k == 999) break wordloop;
+				}
+
+				if (wordLoop == 1000) {
+					System.out.println(wordLoop);
+					break;
 				}
 			}
 		}

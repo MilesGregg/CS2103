@@ -57,15 +57,19 @@ public class WordSearchTester {
 	public void testMakeImpossibleLarge () {
 		final String[] words = new String[] {"object", "oriented", "programming", "fan", "desk", "apple", "headphones", "binoculars", "calculator",
 				"java", "python", "c", "pencil", "pen", "picture", "orange", "id", "banana", "color"};
+		for (String word : words) {
+			System.out.println("Word: " + word);
+		}
 		final char[][][] grid = _wordSearch.make(words, 1, 2, 11);
-		// checks to make sure all words have a position
-		int [][][] allWordPos = _wordSearch.searchForAll(grid, words);
-		assertNotNull(grid);
 		System.out.println(Arrays.deepToString(grid));
 		// checks to make sure all words have a position
-		for (int[][] allWordPo : allWordPos) {
-			assertNotNull(allWordPo);
-		}
+		//int [][][] allWordPos = _wordSearch.searchForAll(grid, words);
+		assertNull(grid);
+		//System.out.println(Arrays.deepToString(grid));
+		// checks to make sure all words have a position
+		//for (int[][] allWordPo : allWordPos) {
+		//	assertNotNull(allWordPo);
+		//}
 		//assertNull(grid);
 	}
 
