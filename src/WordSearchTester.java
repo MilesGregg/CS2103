@@ -57,20 +57,36 @@ public class WordSearchTester {
 	public void testMakeImpossibleLarge () {
 		final String[] words = new String[] {"object", "oriented", "programming", "fan", "desk", "apple", "headphones", "binoculars", "calculator",
 				"java", "python", "c", "pencil", "pen", "picture", "orange", "id", "banana", "color"};
-		for (String word : words) {
-			System.out.println("Word: " + word);
-		}
 		final char[][][] grid = _wordSearch.make(words, 1, 2, 11);
-		System.out.println(Arrays.deepToString(grid));
 		// checks to make sure all words have a position
-		//int [][][] allWordPos = _wordSearch.searchForAll(grid, words);
+		int [][][] allWordPos = _wordSearch.searchForAll(grid, words);
 		assertNull(grid);
-		//System.out.println(Arrays.deepToString(grid));
-		// checks to make sure all words have a position
-		//for (int[][] allWordPo : allWordPos) {
-		//	assertNotNull(allWordPo);
-		//}
-		//assertNull(grid);
+		for (int[][] allWordPo : allWordPos) {
+			assertNull(allWordPo);
+		}
+	}
+
+	@Test
+	/**
+	 * Tests to make sure the make returns null when given a null rods array
+	 */
+	public void testMakeWithNullArray() {
+		final String[] words = null;
+		final char[][][] grid = _wordSearch.make(words, 10, 10, 10);
+
+		assertNull(grid);
+	}
+
+	@Test
+	/**
+	 * Test make function with all 0 sizes on x, y, z
+	 */
+	public void testMakeWithZeroSizes() {
+		final String[] words = new String[] {"object", "oriented", "programming", "fan", "desk", "apple", "headphones", "binoculars", "calculator",
+				"java", "python", "c", "pencil", "pen", "picture", "orange", "id", "banana", "color"};
+		final char[][][] grid = _wordSearch.make(words, 0, 0, 0);
+
+		assertNull(grid);
 	}
 
 	@Test
@@ -149,7 +165,6 @@ public class WordSearchTester {
 				}
 		};
 
-
 		final int[][] location = _wordSearch.search(grid, "ox");
 		assertNotNull(location);
 		assertEquals(location[0][0], 1);
@@ -158,6 +173,34 @@ public class WordSearchTester {
 		assertEquals(location[1][0], 2);
 		assertEquals(location[1][1], 1);
 		assertEquals(location[1][2], 1);
+	}
+
+	@Test
+	public void testSearch3d2 () {
+		// Note: this grid is 3x4x2 in size
+		final char[][][] grid = new char[][][]  {
+				{
+						{'a', 'a'},
+						{'a', 'a'},
+						{'a', 'a'},
+						{'a', 'a'}
+				},
+				{
+						{'o', 'x'},
+						{'a', 'a'},
+						{'a', 'a'},
+						{'a', 'a'}
+				},
+				{
+						{'a', 'a'},
+						{'a', 'a'},
+						{'a', 'a'},
+						{'a', 'a'}
+				}
+		};
+
+		final int[][] location = _wordSearch.search(grid, "ox");
+		assertNotNull(location);
 	}
 
 	@Test
