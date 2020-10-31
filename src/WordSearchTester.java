@@ -61,6 +61,7 @@ public class WordSearchTester {
 		// checks to make sure all words have a position
 		int [][][] allWordPos = _wordSearch.searchForAll(grid, words);
 		assertNotNull(grid);
+		System.out.println(Arrays.deepToString(grid));
 		// checks to make sure all words have a position
 		for (int[][] allWordPo : allWordPos) {
 			assertNotNull(allWordPo);

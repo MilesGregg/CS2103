@@ -37,6 +37,10 @@ public class WordSearch3D {
 		return locations;
 	}
 
+	private boolean x (int f){
+		return 0 > f;
+	}
+
 	/**
 	 * Given a starting position in the grid and a vector, checks if you can obtain the desired word
 	 * by starting at the start point and moving in the direction of the vector
@@ -92,8 +96,8 @@ public class WordSearch3D {
 		int k1 = k + zdir * (word.length() - 1);
 		// makes sure all ending positions are in the grid
 		return !((i1 < 0 || i1 >= grid.length) ||
-				(j1 < 0 || j1 >= grid[0].length) ||
-				(k1 < 0 || k1 >= grid[0][0].length));
+				 (j1 < 0 || j1 >= grid[0].length) ||
+				 (k1 < 0 || k1 >= grid[0][0].length));
 	}
 
 	/**
@@ -173,8 +177,10 @@ public class WordSearch3D {
 		char[][][] grid;
 		final Random rng = new Random();
 
-		for(int _counter = 0; _counter < 1000; _counter++) {
+		for (int _counter = 0; _counter < 1000; _counter++) {
 			grid = new char[sizeX][sizeY][sizeZ];
+
+			wordloop:
 			for (int i = 0; i < words.length; i++) {
 				for (int k = 0; k < 1000; k++) {
 					// generates a random start position for the word
@@ -186,7 +192,7 @@ public class WordSearch3D {
 					final int randomPosition = rng.nextInt(26);
 					int[] randomVector = vectors.get(randomPosition);
 
-					// checks to make sure the word will go out of bounds if placed at that position and direction
+					// checks to make sure the word will not go out of bounds if placed at that position and direction
 					if (!valid(randomVector, grid, words[i], randomX, randomY, randomZ)) continue;
 					// checks to make sure it won't overwrite any existing words
 					boolean possible = true;
@@ -200,13 +206,16 @@ public class WordSearch3D {
 					// if the word can be placed than place that word
 					if (possible) {
 						insert(grid, randomVector, randomX, randomY, randomZ, words[i]);
+						System.out.println(words[i]);
 						if (i == words.length - 1) {
 							// add random characters in the 3d grid
-							addRandom(grid);
+							//addRandom(grid);
 							// then return the grid
 							return grid;
-						} else break;
+						}
+						else break;
 					}
+					if(k == 999) break wordloop;
 				}
 			}
 		}
