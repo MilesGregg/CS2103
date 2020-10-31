@@ -95,9 +95,9 @@ public class WordSearch3D {
 		int j1 = j + ydir * (word.length() - 1);
 		int k1 = k + zdir * (word.length() - 1);
 		// makes sure all ending positions are in the grid
-		return !((i1 < 0 || i1 >= grid.length) ||
-				 (j1 < 0 || j1 >= grid[0].length) ||
-				 (k1 < 0 || k1 >= grid[0][0].length));
+		return (i1 < 0 || i1 >= grid.length) ||
+				(j1 < 0 || j1 >= grid[0].length) ||
+				(k1 < 0 || k1 >= grid[0][0].length);
 	}
 
 	/**
@@ -115,7 +115,7 @@ public class WordSearch3D {
 					// loops every vector direction at each starting position
 					for(int[] item : vectors) {
 						// checks if the vector goes out bounds
-						if(!valid(item, grid, word, i, j, k)) continue;
+						if(valid(item, grid, word, i, j, k)) continue;
 						// checks the word in the grid makes the one we are looking for
 						int[][] out = checkVector(grid, word, item, i, j, k);
 						// output position if the word matches
@@ -195,7 +195,7 @@ public class WordSearch3D {
 					int[] randomVector = vectors.get(randomPosition);
 
 					// checks to make sure the word will not go out of bounds if placed at that position and direction
-					if (!valid(randomVector, grid, words[i], randomX, randomY, randomZ)) continue;
+					if (valid(randomVector, grid, words[i], randomX, randomY, randomZ)) continue;
 					// checks to make sure it won't overwrite any existing words
 					boolean possible = true;
 					for (int t = 0; t < words[i].length(); t++) {
