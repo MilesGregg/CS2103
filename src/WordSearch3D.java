@@ -104,7 +104,7 @@ public class WordSearch3D {
 	 * word, then the method returns a list of the (3-d) locations of its letters; if not,
 	 */
 	public int[][] search (char[][][] grid, String word) {
-		if (grid == null) return null;
+		if (grid == null || word == null) return null;
 		// loops every starting position in the 3d grid
 		for (int i = 0; i < grid.length; i++) {
 			for (int j = 0; j < grid[0].length; j++) {
@@ -171,9 +171,20 @@ public class WordSearch3D {
 	 * no satisfying grid could be found.
 	 */
 	public char[][][] make (String[] words, int sizeX, int sizeY, int sizeZ) {
-		if (words == null || (sizeX == 0 && sizeY == 0 && sizeZ == 0)) return null;
 
-		char[][][] grid;
+		char[][][] grid = new char[sizeX][sizeY][sizeZ];
+		// if the list of words is null, just initialize and return a random grid
+		if(words == null) {
+			addRandom(grid);
+			return grid;
+		}
+		// if the grid has size 0 in all dimensions, and the word list isn't empty, return null
+		if (sizeX == 0 || sizeY == 0 || sizeZ == 0)
+			return null;
+
+
+
+
 		final Random rng = new Random();
 
 		for (int _counter = 0; _counter < 1000; _counter++) {

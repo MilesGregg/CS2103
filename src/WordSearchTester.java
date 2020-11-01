@@ -70,10 +70,24 @@ public class WordSearchTester {
 	/**
 	 * Tests to make sure the make returns null when given a null rods array
 	 */
-	public void testMakeWithNullArray() {
+	public void testMakeWithNullWords() {
 		final String[] words = null;
 		final char[][][] grid = _wordSearch.make(words, 10, 10, 10);
 
+		assertNotNull(grid);
+
+	}
+	@Test
+	public void testMakeWithAllZeroSize() {
+		final String[] words = {"Hello", "World"};
+		final char[][][] grid = _wordSearch.make(words, 0, 0, 0);
+		assertNull(grid);
+	}
+
+	@Test
+	public void testMakeWithZeroDimension() {
+		final String[] words = {"Hello", "World"};
+		final char[][][] grid = _wordSearch.make(words, 0, 1, 2);
 		assertNull(grid);
 	}
 
@@ -199,8 +213,8 @@ public class WordSearchTester {
 				}
 		};
 
-		final int[][] location = _wordSearch.search(grid, "ox");
-		assertNotNull(location);
+		final int[][] location = _wordSearch.search(grid, "oax");
+		assertNull(location);
 	}
 
 	@Test
@@ -229,6 +243,28 @@ public class WordSearchTester {
 
 		final int[][] location = _wordSearch.search(grid, "axe");
 		assertNull(location);
+	}
+
+	@Test
+	public void testSearchWithEmptyWord() {
+		final char[][][] grid = _wordSearch.make(null, 10, 10, 10);
+		int[][] posns = _wordSearch.search(grid, "");
+		assertNotNull(posns);
+		assertEquals(posns.length, 0);
+	}
+
+	@Test
+	public void testSearchWithNullWord() {
+		final char[][][] grid = _wordSearch.make(null, 10, 10, 10);
+		int[][] posns = _wordSearch.search(grid, null);
+		assertNull(posns);
+	}
+
+	@Test
+	public void testSearchWithNullGrid() {
+		final char[][][] grid = null;
+		int[][] posns = _wordSearch.search(grid, "hello");
+		assertNull(posns);
 	}
 
 	@Test
