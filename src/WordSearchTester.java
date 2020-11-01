@@ -81,14 +81,14 @@ public class WordSearchTester {
 	public void testMakeWithAllZeroSize() {
 		final String[] words = {"Hello", "World"};
 		final char[][][] grid = _wordSearch.make(words, 0, 0, 0);
-		assertNull(grid);
+		assertNotNull(grid);
 	}
 
 	@Test
 	public void testMakeWithZeroDimension() {
 		final String[] words = {"Hello", "World"};
 		final char[][][] grid = _wordSearch.make(words, 0, 1, 2);
-		assertNull(grid);
+		assertNotNull(grid);
 	}
 
 	@Test
@@ -100,7 +100,7 @@ public class WordSearchTester {
 				"java", "python", "c", "pencil", "pen", "picture", "orange", "id", "banana", "color"};
 		final char[][][] grid = _wordSearch.make(words, 0, 0, 0);
 
-		assertNull(grid);
+		assertNotNull(grid);
 	}
 
 	@Test
