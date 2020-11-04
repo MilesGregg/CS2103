@@ -1,6 +1,7 @@
 package Project2;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * An implementation of <tt>Cache</tt> that uses a least-recently-used (LRU)
@@ -8,7 +9,7 @@ import java.util.HashMap;
  */
 public class LRUCache<T, U> implements Cache<T, U> {
 
-	private final HashMap<T, DoubleLinkedList> map = new HashMap<T, DoubleLinkedList>();
+	private final Map<T, DoubleLinkedList> map = new HashMap<T, DoubleLinkedList>();
 	private final DataProvider<T, U> baseProvider;
 
 	private int capacity = 0;
