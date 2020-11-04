@@ -11,6 +11,6 @@ public class CacheTester {
 	@Test
 	public void leastRecentlyUsedIsCorrect () {
 		DataProvider<Integer,String> provider = null; // Need to instantiate an actual DataProvider
-		Cache<Integer,String> cache = new LRUCache<Integer,String>(provider, 5);
+		Cache<Integer,String> cache = new LRUCache<>(provider, 5);
 	}
 }
