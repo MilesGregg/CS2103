@@ -28,12 +28,6 @@ public class LRUCache<T, U> implements Cache<T, U> {
 		this.capacity = capacity;
 	}
 
-	private Node search(DoubleLinkedList list, T key){
-		Node current = list.head;
-		while(current.value != key) current = current.next;
-		return current;
-	}
-
 	/**
 	 * Returns the value associated with the specified key.
 	 * @param key the key
@@ -42,23 +36,28 @@ public class LRUCache<T, U> implements Cache<T, U> {
 	public U get (T key) {
 		Node node;
 		U value;
+		System.out.println(map);
 
 		if (this.map.containsKey(key)) {
 			node = map.get(key);
+			System.out.println(node.value);
 			// make it move to front
 			moveToFront(node, doubleLinkedList);
 			value = node.value;
+			System.out.println(node.value);
 
 		}
 		else {
-			if (map.size() > capacity) {
-				// remove
-			}
 			value = baseProvider.get(key);
 			Node newNode = new Node(value, null, null);
 			map.put(key, newNode);
 			insert(newNode, doubleLinkedList);
 			numberMisses++;
+			if (map.size() > capacity) {
+				doubleLinkedList.removeLast();
+				map.remove(key);
+			}
+
 		}
 
 		return value;  // TODO -- implement!
@@ -87,23 +86,27 @@ public class LRUCache<T, U> implements Cache<T, U> {
 	}
 
 	private void moveToFront(Node node, DoubleLinkedList doubleLinkedList){
-		node.prev.next = node.next;
+		if(node.prev != null)
+			node.prev.next = node.next;
+		node.next.prev = node.prev;
 		node.prev = null;
 		node.next = doubleLinkedList.head;
 		doubleLinkedList.head = node;
 	}
 
 	private class Node{
-		U value;
-		Node next;
-		Node prev;
+		private U value;
+		private Node next;
+		private Node prev;
 
 		private Node (U value, Node next, Node prev){
 			this.value = value;
 			this.next = next;
 			this.prev = prev;
 		}
+
 	}
+
 
 	private class DoubleLinkedList {
 		Node head;
@@ -113,6 +116,14 @@ public class LRUCache<T, U> implements Cache<T, U> {
 			head = null;
 			tail = null;
 		}
+
+		public Node removeLast(){
+			Node out = tail;
+			tail.prev.next = null;
+			tail = tail.prev;
+			return out;
+		}
+
 		public void add(Node value){
 			if (head == null) {
 				head = value;
@@ -144,5 +155,6 @@ public class LRUCache<T, U> implements Cache<T, U> {
 			value.next.prev = value.prev;
 		}
 	}
+
 
 }
