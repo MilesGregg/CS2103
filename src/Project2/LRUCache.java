@@ -9,7 +9,7 @@ import java.util.Map;
  */
 public class LRUCache<T, U> implements Cache<T, U> {
 
-	private final Map<T, U> map = new HashMap<>();
+	private final Map<T, Node> map = new HashMap<>();
 	private final DataProvider<T, U> baseProvider;
 	private final DoubleLinkedList doubleLinkedList = new DoubleLinkedList();
 
@@ -40,12 +40,14 @@ public class LRUCache<T, U> implements Cache<T, U> {
 	 * @return the value associated with the key
 	 */
 	public U get (T key) {
+		Node node;
 		U value;
 
 		if (this.map.containsKey(key)) {
-			value = map.get(key);
+			node = map.get(key);
 			// make it move to front
-			moveToFront(search(doubleLinkedList, key), doubleLinkedList);
+			moveToFront(node, doubleLinkedList);
+			value = node.value;
 
 		}
 		else {
@@ -53,9 +55,9 @@ public class LRUCache<T, U> implements Cache<T, U> {
 				// remove
 			}
 			value = baseProvider.get(key);
-			map.put(key, value);
-
-			insert(key, doubleLinkedList);
+			Node newNode = new Node(value, null, null);
+			map.put(key, newNode);
+			insert(newNode, doubleLinkedList);
 			numberMisses++;
 		}
 
@@ -70,8 +72,8 @@ public class LRUCache<T, U> implements Cache<T, U> {
 		return numberMisses;
 	}
 
-	private void insert (T key, DoubleLinkedList doubleLinkedList) {
-		doubleLinkedList.addToFront(key);
+	private void insert (Node node, DoubleLinkedList doubleLinkedList) {
+		doubleLinkedList.addToFront(node);
 		if (leastRecent == null) {
 			leastRecent = doubleLinkedList.head;
 		}
@@ -92,11 +94,11 @@ public class LRUCache<T, U> implements Cache<T, U> {
 	}
 
 	private class Node{
-		T value;
+		U value;
 		Node next;
 		Node prev;
 
-		private Node (T value, Node next, Node prev){
+		private Node (U value, Node next, Node prev){
 			this.value = value;
 			this.next = next;
 			this.prev = prev;
@@ -123,16 +125,16 @@ public class LRUCache<T, U> implements Cache<T, U> {
 			}
 		}
 
-		public void addToFront(T key){
-			Node value = new Node(key, null, null);
+		public void addToFront(Node node){
+
 			if (head == null) {
-				head = value;
-				tail = value;
+				head = node;
+				tail = node;
 			}
 			else{
-				head.prev = value;
-				value.next = head;
-				head = value;
+				head.prev = node;
+				node.next = head;
+				head = node;
 			}
 		}
 		private void remove(Node value) {
