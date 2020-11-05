@@ -49,7 +49,8 @@ public class LRUCache2<T, U> implements Cache<T, U> {
                 // remove
                 this.map.remove(leastRecent.key);
                 // make the next least recent node the least recent
-                leastRecent.next.previous = null;
+                if (leastRecent.next != null)
+                    leastRecent.next.previous = null;
                 leastRecent = leastRecent.next;
             }
         }
