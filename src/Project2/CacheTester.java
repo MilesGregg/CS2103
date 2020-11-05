@@ -44,7 +44,7 @@ public class CacheTester {
 		provider.insert(23, "CD");
 
 		// Need to instantiate an actual DataProvider
-		Cache<Integer,String> cache = new LRUCache<>(provider, 5);
+		Cache<Integer,String> cache = new LRUCache2<>(provider, 5);
 		String x = cache.get(4);
 		assertEquals(x, "Win");
 		String y = cache.get(15);
@@ -62,8 +62,39 @@ public class CacheTester {
 		String d = cache.get(15);
 		assertEquals(cache.getNumMisses(), 5);
 		String f = cache.get(7);
-		assertEquals(cache.getNumMisses(), 5);
-		String e = cache.get(4);
 		assertEquals(cache.getNumMisses(), 6);
+		String e = cache.get(4);
+		assertEquals(cache.getNumMisses(), 7);
+	}
+
+	@Test
+	public void testTimeStuff () {
+		Database<Integer, String> provider = new Database<>();
+		for(int i = 0; i < 100000; i++){
+			provider.insert(i, String.valueOf((int) (Math.random()*100000)));
+		}
+		Cache<Integer,String> cache1 = new LRUCache2<>(provider, 10);
+		Cache<Integer,String> cache2 = new LRUCache2<>(provider, 1000);
+		double cache1Longer = 0;
+		for(int j = 0; j < 100; j++) {
+			final long start1 = System.currentTimeMillis();
+			for(int k = 0; k < 100000; k++)
+				cache1.get((int) (Math.random()*100000));
+			final long end1 = System.currentTimeMillis();
+			final long timeDiff1 = end1 - start1;
+
+			final long start2 = System.currentTimeMillis();
+			for(int k = 0; k < 100000; k++)
+				cache2.get((int) (Math.random()*100000));
+			final long end2 = System.currentTimeMillis();
+			final long timeDiff2 = end2 - start2;
+
+			if(timeDiff1 < timeDiff2)
+				cache1Longer += 1;
+		}
+		cache1Longer /= 100;
+		System.out.println(cache1Longer);
+		assertTrue(cache1Longer <= 0.6 && cache1Longer >= 0.4);
+
 	}
 }
