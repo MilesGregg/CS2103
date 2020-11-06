@@ -32,6 +32,7 @@ public class LRUCache2 <T, U> implements Cache <T, U> {
      * @param key the key
      * @return the value associated with the key
      */
+    @Override
     public U get (T key) {
         Node node;
 
@@ -62,6 +63,7 @@ public class LRUCache2 <T, U> implements Cache <T, U> {
      * Returns the number of cache misses since the object's instantiation.
      * @return the number of cache misses since the object's instantiation.
      */
+    @Override
     public int getNumMisses () {
         return numberMisses;
     }

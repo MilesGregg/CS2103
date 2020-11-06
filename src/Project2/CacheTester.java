@@ -81,7 +81,7 @@ public class CacheTester {
 
 			long[] times = new long[1000];
 			for (int k = 1; k < 1001; k++) {
-				Cache<Integer, String> cache1 = new LRUCache2<>(provider, 1000000);
+				Cache<Integer, String> cache1 = new LRUCache2<>(provider, 100*k);
 				for (int q = 0; q < 100 * k; q++)
 					cache1.get(q);
 				final long start1 = System.currentTimeMillis();
