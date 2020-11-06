@@ -35,7 +35,7 @@ public class LRUCache2<T, U> implements Cache<T, U> {
     public U get (T key) {
         Node node;
 
-        if (this.map.containsKey(key)) {
+        if (map.containsKey(key)) {
             node = map.get(key);
             moveToFront(node);
             // make it move to front
@@ -55,7 +55,7 @@ public class LRUCache2<T, U> implements Cache<T, U> {
             }
         }
 
-        return node.value;  // TODO -- implement!
+        return node.value;
     }
 
     /**
@@ -70,8 +70,8 @@ public class LRUCache2<T, U> implements Cache<T, U> {
         if (mostRecent.equals(node)) {
             return;
         }
-
-        node.next.previous = node.previous;
+        if(node.next != null)
+            node.next.previous = node.previous;
 
         if (node.previous != null) {
             node.previous.next = node.next;
