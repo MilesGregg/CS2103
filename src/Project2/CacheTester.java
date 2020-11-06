@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public class CacheTester {
 
-	private class Database<T, U> implements DataProvider<T, U> {
+	private static class Database<T, U> implements DataProvider<T, U> {
 		private Map<T, U> data;
 
 		private Database(){
@@ -73,45 +73,45 @@ public class CacheTester {
 		double count = 0;
 
 			//System.out.println(System.currentTimeMillis());
+
 			Database<Integer, String> provider = new Database<>();
 			for (int i = 0; i < 1000000; i++) {
-				provider.insert(i, String.valueOf((int) (Math.random() * 1000000)));
+				provider.insert(i, String.valueOf(i));
 			}
 
-			long[] times = new long[100];
-			for (int k = 1; k < 100; k++) {
+			long[] times = new long[1000];
+			for (int k = 1; k < 1001; k++) {
 				Cache<Integer, String> cache1 = new LRUCache2<>(provider, 1000000);
-				for(int q = 0; q < 1000*k; q++)
+				for (int q = 0; q < 100 * k; q++)
 					cache1.get(q);
-
 				final long start1 = System.currentTimeMillis();
-				for (int j = 0; j < 10000000; j++)
-					cache1.get((int) (Math.random() * 1000 * k));
+				for (int j = 0; j < 1000000; j++)
+					cache1.get((int) (Math.random() * 1000));
 				final long end1 = System.currentTimeMillis();
 				final long timeDiff1 = end1 - start1;
-				times[k] = timeDiff1;
+				times[k - 1] = timeDiff1;
 			}
 			int greater = 0;
 			int equal = 0;
 			int trials = 0;
-			for (int i = 1; i < times.length; i++)
+			for (int i = 0; i < times.length; i++)
 				for (int j = i + 1; j < times.length; j++) {
-					//if(times[i] > 100 || times[j] > 100) continue;
 					trials++;
 					if (times[j] > times[i])
 						greater++;
-					else if(times[j] == times[i])
-						equal ++;
+					else if (times[j] == times[i])
+						equal++;
 				}
 
-		double greaterFraction = (double) greater / trials;
-		double equalFraction = (double) equal / trials;
+			double greaterFraction = (double) greater / trials;
+			double equalFraction = (double) equal / trials;
 
-		System.out.println(Arrays.toString(times));
+			System.out.println(Arrays.toString(times));
 
 
-		System.out.println(greaterFraction);
-		System.out.println(equalFraction);
-		assertTrue(greaterFraction <= 0.6 && greaterFraction >= 0.4);
+			System.out.println(greaterFraction);
+			System.out.println(equalFraction);
+			assertTrue (greaterFraction + equalFraction / 2 <= 0.6 && greaterFraction + equalFraction / 2 >= 0.4);
+
 	}
 }

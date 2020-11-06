@@ -7,10 +7,10 @@ import java.util.Map;
  * An implementation of <tt>Cache</tt> that uses a least-recently-used (LRU)
  * eviction policy.
  */
-public class LRUCache2<T, U> implements Cache<T, U> {
+public class LRUCache2 <T, U> implements Cache <T, U> {
 
-    private final Map<T, Node> map = new HashMap<T, Node>();
-    private final DataProvider<T, U> baseProvider;
+    private final Map <T, Node> map = new HashMap <>();
+    private final DataProvider <T, U> baseProvider;
 
     private int capacity = 0;
     private int numberMisses = 0;
@@ -22,7 +22,7 @@ public class LRUCache2<T, U> implements Cache<T, U> {
      * @param provider the data provider to consult for a cache miss
      * @param capacity the exact number of (key,value) pairs to store in the cache
      */
-    public LRUCache2 (DataProvider<T, U> provider, int capacity) {
+    public LRUCache2 (DataProvider <T, U> provider, int capacity) {
         this.baseProvider = provider;
         this.capacity = capacity;
     }
@@ -75,7 +75,8 @@ public class LRUCache2<T, U> implements Cache<T, U> {
 
         if (node.previous != null) {
             node.previous.next = node.next;
-        } else {
+        }
+        else {
             leastRecent = node.next;
         }
 
