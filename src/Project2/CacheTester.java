@@ -85,16 +85,16 @@ public class CacheTester {
 				for (int q = 0; q < 100 * k; q++)
 					cache1.get(q);
 				final long start1 = System.currentTimeMillis();
-				for (int j = 0; j < 1000000; j++)
+				for (int j = 0; j < 500000; j++)
 					cache1.get((int) (Math.random() * 1000));
 				final long end1 = System.currentTimeMillis();
 				final long timeDiff1 = end1 - start1;
-				times[k - 1] = timeDiff1;
+				times[k-1] = timeDiff1;
 			}
 			int greater = 0;
 			int equal = 0;
 			int trials = 0;
-			for (int i = 0; i < times.length; i++)
+			for (int i = 5; i < times.length; i++)
 				for (int j = i + 1; j < times.length; j++) {
 					trials++;
 					if (times[j] > times[i])
