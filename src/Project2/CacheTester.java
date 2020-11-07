@@ -23,7 +23,6 @@ public class CacheTester {
 
 	private static class Database2 implements DataProvider<Double, int[]> {
 
-
 		@Override
 		public int[] get(Double key) {
 			return new int[] {(int) (double) key, (int) (double) key + 1};
@@ -32,7 +31,6 @@ public class CacheTester {
 	@Test
 	public void leastRecentlyUsedIsCorrect () {
 		Database provider = new Database();
-
 
 		// Need to instantiate an actual DataProvider
 		Cache<Integer,String> cache = new LRUCache2<>(provider, 5);
@@ -78,7 +76,7 @@ public class CacheTester {
 			int greater = 0;
 			int equal = 0;
 			int trials = 0;
-			for (int i = 5; i < times.length; i++)
+			for (int i = 5; i < times.length; i++) {
 				for (int j = i + 1; j < times.length; j++) {
 					trials++;
 					if (times[j] > times[i])
@@ -86,10 +84,12 @@ public class CacheTester {
 					else if (times[j] == times[i])
 						equal++;
 				}
+			}
 			double greaterFraction = (double) greater / trials;
 			double equalFraction = (double) equal / trials;
-				sum += greaterFraction + equalFraction / 2;
+			sum += greaterFraction + equalFraction / 2;
 		}
+		System.out.println(sum/10);
 		assertTrue(sum / 10 <= 0.6 && sum / 10 >= 0.4);
 	}
 
@@ -97,44 +97,44 @@ public class CacheTester {
 
 
 	@Test
-	public void testLRUWithLargeNumbers(){
+	public void testLRUWithLargeNumbers (){
 		Database provider = new Database();
 		// Need to instantiate an actual DataProvider
 		Cache<Integer,String> cache = new LRUCache2<>(provider, 500);
 		// Every get() operation here is a miss, so the number of misses should increase by 1 each time
-		for(int i = 0; i < 750; i++){
+		for (int i = 0; i < 750; i++) {
 			cache.get(i);
 			assertEquals(cache.getNumMisses(), i+1);
 		}
 		// every get() operation here is a hit, so the number of misses should not change
-		for(int j = 499; j >= 250; j--){
+		for (int j = 499; j >= 250; j--) {
 			cache.get(j);
 			assertEquals(cache.getNumMisses(), 750);
 		}
 		// every get() operation here is a miss again, so the number of misses should increase by 1 each time
-		for(int k = 249; k >= 0; k--){
+		for (int k = 249; k >= 0; k--) {
 			cache.get(k);
 			assertEquals(cache.getNumMisses(), 750 + 250 - k);
 		}
 	}
 
 	@Test
-	public void testLRUWithLargeNumbers2(){
+	public void testLRUWithLargeNumbers2() {
 		Database2 provider = new Database2();
 		// Need to instantiate an actual DataProvider
 		Cache<Double, int[]> cache = new LRUCache2<>(provider, 500);
 		// Every get() operation here is a miss, so the number of misses should increase by 1 each time
-		for(double i = 0; i < 750; i++) {
+		for (double i = 0; i < 750; i++) {
 			cache.get(i);
 			assertEquals(cache.getNumMisses(), (int) i+1);
 		}
 		// every get() operation here is a hit, so the number of misses should not change
-		for(double j = 499; j >= 250; j--){
+		for (double j = 499; j >= 250; j--) {
 			cache.get(j);
 			assertEquals(cache.getNumMisses(), 750);
 		}
 		// every get() operation here is a miss again, so the number of misses should increase by 1 each time
-		for(double k = 249; k >= 0; k--){
+		for (double k = 249; k >= 0; k--) {
 			cache.get(k);
 			assertEquals(cache.getNumMisses(), 750 + 250 - (int) k);
 		}

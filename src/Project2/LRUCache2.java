@@ -8,15 +8,13 @@ import java.util.Map;
  * eviction policy.
  */
 public class LRUCache2 <T, U> implements Cache <T, U> {
-
     private final Map <T, Node> map = new HashMap <>();
     private final DataProvider <T, U> baseProvider;
-
-    private int capacity = 0;
+    private Node mostRecentNode;
+    private Node leastRecentNode;
+    // tracks how many misses the cache finds and the max capacity of the cache
+    private final int capacity;
     private int numberMisses = 0;
-
-    private Node mostRecent;
-    private Node leastRecent;
 
     /**
      * @param provider the data provider to consult for a cache miss
@@ -32,30 +30,31 @@ public class LRUCache2 <T, U> implements Cache <T, U> {
      * @param key the key
      * @return the value associated with the key
      */
-    @Override
     public U get (T key) {
         Node node;
-
-        if (map.containsKey(key)) {
-            node = map.get(key);
-            moveToFront(node);
-            // make it move to front
+        // return node right away if it is already in the hashmap(linked list)
+        if (this.map.containsKey(key)) {
+            node = this.map.get(key);
+            moveNodeToFront(node);
         } else {
-            numberMisses++;
+            // count the number of misses the cache does
+            this.numberMisses++;
 
-            node = new Node(key, baseProvider.get(key));
-            insert(node);
+            // make new node to add to the hashmap(linked list)
+            node = new Node(key, this.baseProvider.get(key));
+            insertNode(node);
 
-            if (map.size() > capacity) {
-                // remove
-                this.map.remove(leastRecent.key);
-                // make the next least recent node the least recent
-                if (leastRecent.next != null)
-                    leastRecent.next.previous = null;
-                leastRecent = leastRecent.next;
+            // if the map is bigger than the capacity then remove a node from the hashmap(linked list)
+            if (this.map.size() > this.capacity) {
+                // remove node from hashmap
+                this.map.remove(this.leastRecentNode.key);
+                // make the next least recent node from least recent
+                if (this.leastRecentNode.next != null)
+                    this.leastRecentNode.next.previous = null;
+                this.leastRecentNode = this.leastRecentNode.next;
             }
         }
-
+        // return the node value that we found
         return node.value;
     }
 
@@ -63,54 +62,75 @@ public class LRUCache2 <T, U> implements Cache <T, U> {
      * Returns the number of cache misses since the object's instantiation.
      * @return the number of cache misses since the object's instantiation.
      */
-    @Override
     public int getNumMisses () {
         return numberMisses;
     }
 
-    private void moveToFront (Node node) {
-        if (mostRecent.equals(node)) {
+    /**
+     * move the current node to the mostRecent node
+     * @param node - node object we are moving
+     */
+    private void moveNodeToFront (Node node) {
+        // if the mostRecent node equals the node we are moving than break out of method
+        if (mostRecentNode.equals(node))
             return;
-        }
+
         if(node.next != null)
             node.next.previous = node.previous;
 
         if (node.previous != null) {
             node.previous.next = node.next;
+        } else {
+            leastRecentNode = node.next;
         }
-        else {
-            leastRecent = node.next;
-        }
-
+        // Move the current node to the mostRecent
         node.next = null;
-        node.previous = mostRecent;
-        mostRecent.next = node;
-        mostRecent = node;
+        node.previous = mostRecentNode;
+        mostRecentNode.next = node;
+        mostRecentNode = node;
     }
 
-    private void insert (Node node) {
+    /**
+     * insert node into hashmap
+     * @param node - node to be inserted into the hashmap
+     */
+    private void insertNode (Node node) {
+        // insert into hashmap
         this.map.put(node.key, node);
 
-        if (leastRecent == null) {
-            leastRecent = node;
+        // make the mostRecent the
+        if (mostRecentNode != null) {
+            node.previous = mostRecentNode;
+            mostRecentNode.next = node;
         }
 
-        if (mostRecent != null) {
-            node.previous = mostRecent;
-            mostRecent.next = node;
+        // update the leastRecent node with the node we are inserting
+        if (leastRecentNode == null) {
+            leastRecentNode = node;
         }
-
-        mostRecent = node;
+        // save the mostRecent node with the node we are inserting
+        mostRecentNode = node;
     }
 
+    /**
+     * The Node class contains the contents for the doubly linked list for connecting the nodes to each other.
+     * Each node has two pointers for the next and previous nodes in the linked list.
+     */
     private class Node {
+        // key and value values for the current node
         T key;
         U value;
 
+        // next and previous nodes in the linked list
         Node next;
         Node previous;
 
-        private Node(T key, U value) {
+        /**
+         * setting up the node with their specified key and value values
+         * @param key - the current node key
+         * @param value - the current node value
+         */
+        private Node (T key, U value) {
             this.key = key;
             this.value = value;
         }
