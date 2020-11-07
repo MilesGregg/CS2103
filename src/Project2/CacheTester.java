@@ -13,52 +13,42 @@ import java.util.Map;
  */
 public class CacheTester {
 
-	private static class Database<T, U> implements DataProvider<T, U> {
-		private Map<T, U> data;
-
-		private Database(){
-			data = new HashMap<>();
-		}
-
-		public void insert(T key, U value){
-			data.put(key, value);
-		}
+	private static class Database implements DataProvider<Integer, String> {
 
 		@Override
-		public U get(T key) {
-			return data.get(key);
+		public String get(Integer key) {
+			return String.valueOf(key);
 		}
+	}
 
-		public int size(){
-			return data.size();
+	private static class Database2 implements DataProvider<Double, int[]> {
+
+
+		@Override
+		public int[] get(Double key) {
+			return new int[] {(int) (double) key, (int) (double) key + 1};
 		}
 	}
 	@Test
 	public void leastRecentlyUsedIsCorrect () {
-		Database<Integer, String> provider = new Database<>();
-		provider.insert(4, "Win");
-		provider.insert(7, "Fan");
-		provider.insert(14, "Australia");
-		provider.insert(-4, "Watermelon");
-		provider.insert(15, "Notebook");
-		provider.insert(1, "DVD");
-		provider.insert(23, "CD");
+		Database provider = new Database();
+
 
 		// Need to instantiate an actual DataProvider
 		Cache<Integer,String> cache = new LRUCache2<>(provider, 5);
 		String x = cache.get(4);
-		assertEquals(x, "Win");
+		assertEquals(x, "4");
 		String y = cache.get(15);
-		assertEquals(y, "Notebook");
+		assertEquals(y, "15");
 		String z = cache.get(-4);
-		assertEquals(z, "Watermelon");
+		assertEquals(z, "-4");
 		assertEquals(cache.getNumMisses(), 3);
 		String a = cache.get(-4);
 		assertEquals(cache.getNumMisses(), 3);
 		String b = cache.get(23);
-		assertEquals(b, "CD");
+		assertEquals(b, "23");
 		String c = cache.get(1);
-		assertEquals(c, "DVD");
+		assertEquals(c, "1");
 		assertEquals(cache.getNumMisses(), 5);
 		String d = cache.get(15);
 		assertEquals(cache.getNumMisses(), 5);
@@ -69,27 +59,21 @@ public class CacheTester {
 	}
 
 	@Test
-	public void testTimeStuff () {
-		double count = 0;
-
-			//System.out.println(System.currentTimeMillis());
-
-			Database<Integer, String> provider = new Database<>();
-			for (int i = 0; i < 1000000; i++) {
-				provider.insert(i, String.valueOf(i));
-			}
-
-			long[] times = new long[1000];
-			for (int k = 1; k < 1001; k++) {
-				Cache<Integer, String> cache1 = new LRUCache2<>(provider, 100*k);
+	public void testTimeComplexity () {
+		double sum = 0;
+		for (int counter = 0; counter < 10; counter++) {
+			Database provider = new Database();
+			long[] times = new long[100];
+			for (int k = 1; k < 101; k++) {
+				Cache<Integer, String> cache1 = new LRUCache2<>(provider, 100 * k);
 				for (int q = 0; q < 100 * k; q++)
 					cache1.get(q);
 				final long start1 = System.currentTimeMillis();
-				for (int j = 0; j < 500000; j++)
-					cache1.get((int) (Math.random() * 1000));
+				for (int j = 0; j < 1000000; j++)
+					cache1.get((int) (100 * k));
 				final long end1 = System.currentTimeMillis();
 				final long timeDiff1 = end1 - start1;
-				times[k-1] = timeDiff1;
+				times[k - 1] = timeDiff1;
 			}
 			int greater = 0;
 			int equal = 0;
@@ -102,16 +86,58 @@ public class CacheTester {
 					else if (times[j] == times[i])
 						equal++;
 				}
-
 			double greaterFraction = (double) greater / trials;
 			double equalFraction = (double) equal / trials;
-
-			System.out.println(Arrays.toString(times));
-
-
-			System.out.println(greaterFraction);
-			System.out.println(equalFraction);
-			assertTrue (greaterFraction + equalFraction / 2 <= 0.6 && greaterFraction + equalFraction / 2 >= 0.4);
-
+				sum += greaterFraction + equalFraction / 2;
+		}
+		assertTrue(sum / 10 <= 0.6 && sum / 10 >= 0.4);
 	}
+
+
+
+
+	@Test
+	public void testLRUWithLargeNumbers(){
+		Database provider = new Database();
+		// Need to instantiate an actual DataProvider
+		Cache<Integer,String> cache = new LRUCache2<>(provider, 500);
+		// Every get() operation here is a miss, so the number of misses should increase by 1 each time
+		for(int i = 0; i < 750; i++){
+			cache.get(i);
+			assertEquals(cache.getNumMisses(), i+1);
+		}
+		// every get() operation here is a hit, so the number of misses should not change
+		for(int j = 499; j >= 250; j--){
+			cache.get(j);
+			assertEquals(cache.getNumMisses(), 750);
+		}
+		// every get() operation here is a miss again, so the number of misses should increase by 1 each time
+		for(int k = 249; k >= 0; k--){
+			cache.get(k);
+			assertEquals(cache.getNumMisses(), 750 + 250 - k);
+		}
+	}
+
+	@Test
+	public void testLRUWithLargeNumbers2(){
+		Database2 provider = new Database2();
+		// Need to instantiate an actual DataProvider
+		Cache<Double, int[]> cache = new LRUCache2<>(provider, 500);
+		// Every get() operation here is a miss, so the number of misses should increase by 1 each time
+		for(double i = 0; i < 750; i++) {
+			cache.get(i);
+			assertEquals(cache.getNumMisses(), (int) i+1);
+		}
+		// every get() operation here is a hit, so the number of misses should not change
+		for(double j = 499; j >= 250; j--){
+			cache.get(j);
+			assertEquals(cache.getNumMisses(), 750);
+		}
+		// every get() operation here is a miss again, so the number of misses should increase by 1 each time
+		for(double k = 249; k >= 0; k--){
+			cache.get(k);
+			assertEquals(cache.getNumMisses(), 750 + 250 - (int) k);
+		}
+	}
+
 }
