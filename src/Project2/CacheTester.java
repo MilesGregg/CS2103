@@ -7,6 +7,7 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * Code to test an <tt>LRUCache</tt> implementation.
@@ -60,6 +61,7 @@ public class CacheTester {
 
 	@Test
 	public void testTimeComplexity () {
+		Random rng = new Random();
 		double sum = 0;
 		for (int counter = 0; counter < 10; counter++) {
 			Database provider = new Database();
@@ -70,10 +72,10 @@ public class CacheTester {
 					cache1.get(q);
 				final long start1 = System.currentTimeMillis();
 				for (int j = 0; j < 1000000; j++)
-					cache1.get((int) (100 * k));
+					cache1.get((int) (100 * k * j / 100000.0));
 				final long end1 = System.currentTimeMillis();
 				final long timeDiff1 = end1 - start1;
-				times[k - 1] = timeDiff1;
+				times[k-1] = timeDiff1;
 			}
 			int greater = 0;
 			int equal = 0;
@@ -88,8 +90,12 @@ public class CacheTester {
 				}
 			double greaterFraction = (double) greater / trials;
 			double equalFraction = (double) equal / trials;
-				sum += greaterFraction + equalFraction / 2;
+			sum += greaterFraction + equalFraction / 2;
+			System.out.println(Arrays.toString(times));
+			System.out.println(greaterFraction + equalFraction/2);
+
 		}
+		System.out.println(sum/10);
 		assertTrue(sum / 10 <= 0.6 && sum / 10 >= 0.4);
 	}
 
