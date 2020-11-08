@@ -88,7 +88,7 @@ public class LRUCache2 <T, U> implements Cache <T, U> {
     }
 
     private void insert (Node node) {
-        this.map.put(node.key, node);
+        map.put(node.key, node);
 
         if (leastRecent == null) {
             leastRecent = node;
