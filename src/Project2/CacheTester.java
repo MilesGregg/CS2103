@@ -58,7 +58,6 @@ public class CacheTester {
 
 	@Test
 	public void testTimeComplexity () {
-		int maincount = 0;
 		double[] arr = new double[10];
 		Random rand = new Random();
 		for (int outcounter = 0; outcounter < 1; outcounter++) {
@@ -110,8 +109,6 @@ public class CacheTester {
 			assertTrue(sum/10 <= 0.6 && sum/10 >= 0.4);
 
 		}
-
-
 	}
 
 
