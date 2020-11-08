@@ -70,8 +70,8 @@ public class LRUCache2 <T, U> implements Cache <T, U> {
 
     private void moveToFront (Node node) {
 //
-//        if(node.next != null)
-//            node.next.previous = node.previous;
+        if(node.next != null)
+            node.next.previous = node.previous;
 
         if (node.previous != null) {
             node.previous.next = node.next;
@@ -80,10 +80,11 @@ public class LRUCache2 <T, U> implements Cache <T, U> {
             leastRecent = node.next;
         }
 
-        node.next = null;
         node.previous = mostRecent;
         mostRecent.next = node;
         mostRecent = node;
+        mostRecent.next = null;
+
     }
 
     private void insert (Node node) {

@@ -62,41 +62,47 @@ public class CacheTester {
 	@Test
 	public void testTimeComplexity () {
 		Random rng = new Random();
-		double sum = 0;
-		for (int counter = 0; counter < 10; counter++) {
-			Database provider = new Database();
-			long[] times = new long[100];
-			for (int k = 1; k < 101; k++) {
-				Cache<Integer, String> cache1 = new LRUCache2<>(provider, 100 * k);
-				for (int q = 0; q < 100 * k; q++)
-					cache1.get(q);
-				final long start1 = System.currentTimeMillis();
-				for (int j = 0; j < 1000000; j++)
-					cache1.get((int) (100 * k * j / 100000.0));
-				final long end1 = System.currentTimeMillis();
-				final long timeDiff1 = end1 - start1;
-				times[k-1] = timeDiff1;
-			}
-			int greater = 0;
-			int equal = 0;
-			int trials = 0;
-			for (int i = 5; i < times.length; i++)
-				for (int j = i + 1; j < times.length; j++) {
-					trials++;
-					if (times[j] > times[i])
-						greater++;
-					else if (times[j] == times[i])
-						equal++;
+		int maincount = 0;
+		for (int outcounter = 0; outcounter < 1; outcounter++) {
+			double sum = 0;
+			for (int counter = 0; counter < 10; counter++) {
+				Database provider = new Database();
+				long[] times = new long[100];
+				for (int k = 1; k < 101; k++) {
+					Cache<Integer, String> cache1 = new LRUCache2<>(provider, 100 * k);
+					for (int q = 0; q < 100 * k; q++)
+						cache1.get(q);
+					final long start1 = System.currentTimeMillis();
+					for (int j = 0; j < 2000000; j++)
+						cache1.get((int) (100 * k * j / 2000000.0));
+					final long end1 = System.currentTimeMillis();
+					final long timeDiff1 = end1 - start1;
+					times[k - 1] = timeDiff1;
 				}
-			double greaterFraction = (double) greater / trials;
-			double equalFraction = (double) equal / trials;
-			sum += greaterFraction + equalFraction / 2;
+				int greater = 0;
+				int equal = 0;
+				int trials = 0;
+				for (int i = 0; i < times.length; i++)
+					for (int j = i + 1; j < times.length; j++) {
+						trials++;
+						if (times[j] > times[i])
+							greater++;
+						else if (times[j] == times[i])
+							equal++;
+					}
+				double greaterFraction = (double) greater / trials;
+				double equalFraction = (double) equal / trials;
+				sum += greaterFraction + equalFraction / 2;
 			System.out.println(Arrays.toString(times));
-			System.out.println(greaterFraction + equalFraction/2);
+			System.out.println(greaterFraction);
+			System.out.println(equalFraction/2);
+
+			}
+			System.out.println(sum / 10);
+			assertTrue(sum / 10 <= 0.6 && sum / 10 >= 0.4);
 
 		}
-		System.out.println(sum/10);
-		assertTrue(sum / 10 <= 0.6 && sum / 10 >= 0.4);
+		System.out.println(maincount);
 	}
 
 
