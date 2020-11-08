@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 
 /**
@@ -66,7 +68,7 @@ public class CacheTester {
 				Database provider = new Database();
 				long[] times = new long[100];
 				for (int k = 1; k <= 100; k++) {
-					Cache<Integer, String> cache1 = new LRUCache2<>(provider, 1000 * k);
+					Cache<Integer, String> cache1 = new LRUCache3<>(provider, 1000 * k);
 					/*for (int q = 0; q < 1000 * k; q++)
 						cache1.get(q);*/
 					int[] rands = new int[100000];
@@ -74,7 +76,7 @@ public class CacheTester {
 						rands[j] = rand.nextInt(100000);
 					}
 					final long start1 = System.currentTimeMillis();
-					for (int j = 0; j < 100000; j++)
+					for (int j = 0; j < 1000; j++)
 						cache1.get(rands[j]);
 					final long end1 = System.currentTimeMillis();
 					final long timeDiff1 = end1 - start1;
@@ -83,7 +85,7 @@ public class CacheTester {
 				int greater = 0;
 				int equal = 0;
 				int trials = 0;
-				for (int i = 0; i < times.length; i++)
+				for (int i = 0; i < times.length; i++) {
 					for (int j = i + 1; j < times.length; j++) {
 						trials++;
 						if (times[j] > times[i])
@@ -91,6 +93,7 @@ public class CacheTester {
 						else if (times[j] == times[i])
 							equal++;
 					}
+				}
 				double greaterFraction = (double) greater / trials;
 				double equalFraction = (double) equal / trials;
 				sum += greaterFraction + equalFraction / 2;
@@ -99,13 +102,14 @@ public class CacheTester {
 				long max = Arrays.stream(times).max().getAsLong();
 //				System.out.println(Arrays.toString(times));
 //				System.out.println("greater: " + greaterFraction);
+//				System.out.println("equal: " + equalFraction);
 //				System.out.println(equalFraction/2);
 //				System.out.println("MAX: "+max);
 //				System.out.println("MIN: "+min);
 			}
-			//System.out.println(sum);
-			//System.out.println(Arrays.toString(arr));
-			System.out.println("FINAL: "+sum/10);
+			System.out.println(sum);
+//			System.out.println(Arrays.toString(arr));
+			//System.out.println("FINAL: "+sum/10);
 			assertTrue(sum/10 <= 0.6 && sum/10 >= 0.4);
 
 		}
@@ -158,30 +162,54 @@ public class CacheTester {
 		}
 	}
 
-//	/*
-//	@Test
-//	public void testTimeComplexity2 () {
-//		final int sizeMul = 1000;
-//
-//		DataProvider<Integer, String> provider = new Database();
-//
-//		final int trials = 500;
-//		double[] averageTimeCosts = new double[trials];
-//
-//		for (int i = 1; i <= trials; i++) {
-//			double averageTime = getAverageTimeCost(provider, sizeMul * i);
-//			if (averageTime < 0.45 || averageTime == 0.0) {
-//				averageTimeCosts[i - 1] = averageTime;
-//			}
-//		}
-//		int total = 0, greater = 0, equal = 0;
-//		/*
-//		for (int i = 0; i < averageTimeCosts.length; i += 2) {
-//	 */
-//			if (averageTimeCosts[i+1] > averageTimeCosts[i]) {
-//				total++;
-//			}
-//		}
+
+	@Test
+	public void testTimeComplexity2 () {
+		for (int counter = 0; counter < 20; counter++) {
+			final int sizeMul = 1000;
+
+			DataProvider<Integer, String> provider = new Database();
+
+			final int trials = 100;
+			double[] averageTimeCosts = new double[trials];
+
+			for (int i = 1; i <= trials; i++) {
+				double averageTime = getAverageTimeCost(provider, sizeMul * i);
+			/*if (averageTime < 0.45 || averageTime == 0.0) {
+				averageTimeCosts[i - 1] = averageTime;
+			}*/
+				averageTimeCosts[i - 1] = averageTime;
+			}
+
+			//System.out.println(Arrays.toString(averageTimeCosts));
+
+			int greater = 0;
+			int equal = 0;
+			int count = 0;
+			for (int i = 0; i < averageTimeCosts.length; i++) {
+				for (int j = i + 1; j < averageTimeCosts.length; j++) {
+					count++;
+					if (averageTimeCosts[j] > averageTimeCosts[i])
+						greater++;
+					else if (averageTimeCosts[j] == averageTimeCosts[i])
+						equal++;
+				}
+			}
+			double greaterFraction = (double) greater / count;
+			System.out.println(greaterFraction);
+
+			/*int count = 0, greater = 0, equal = 0;
+
+			for (int i = 0; i < averageTimeCosts.length; i += 2) {
+				count++;
+				if (averageTimeCosts[i + 1] > averageTimeCosts[i]) {
+					greater++;
+				}
+			}
+
+			System.out.println((double) greater / count);*/
+		}
+	}
 //		//System.out.println(total);
 //		System.out.println(Arrays.toString(averageTimeCosts));
 //		for (int i = 0; i < averageTimeCosts.length; i++) {
@@ -201,31 +229,30 @@ public class CacheTester {
 //
 //	}
 //
-//	public double getAverageTimeCost (DataProvider<Integer, String> provider, int capacity) {
-//		Cache<Integer, String> chache = new LRUCache2<>(provider, capacity);
-//
-//		final int trials = 100;
-//		final int range = 100000;
-//
-//		for(int j = 0; j < capacity; j++){
-//			chache.get(j);
-//		}
-//
-//		long totalTime = 0;
-//		Random rand = new Random();
-//		for (int i = 0; i < trials; i++) {
-//			final long start = System.currentTimeMillis();
-//			for (int j = 0; j < 1000; j++) {
-//				int randomKey = rand.nextInt(range);
-//				chache.get(randomKey);
-//			}
-//			final long end = System.currentTimeMillis();
-//			totalTime += (end - start);
-//		}
-//
-//		return (double) totalTime/trials;
-//
-//	}
+	public double getAverageTimeCost (DataProvider<Integer, String> provider, int capacity) {
+		Cache<Integer, String> chache = new LRUCache3<>(provider, capacity);
+
+		final int trials = 100;
+		final int range = 100000;
+
+		for(int j = 0; j < capacity; j++){
+			chache.get(j);
+		}
+
+		long totalTime = 0;
+		Random rand = new Random();
+		for (int i = 0; i < trials; i++) {
+			final long start = System.nanoTime();
+			for (int j = 0; j < 100; j++) {
+				//rand.nextInt(range);
+				chache.get(i);
+			}
+			final long end = System.nanoTime();
+			totalTime += (end - start);
+		}
+
+		return (double) totalTime/trials;
+	}
 
 
 }
