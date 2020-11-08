@@ -68,7 +68,7 @@ public class CacheTester {
 				Database provider = new Database();
 				long[] times = new long[100];
 				for (int k = 1; k <= 100; k++) {
-					Cache<Integer, String> cache1 = new LRUCache3<>(provider, 1000 * k);
+					Cache<Integer, String> cache1 = new LRUCache2<>(provider, 1000 * k);
 					/*for (int q = 0; q < 1000 * k; q++)
 						cache1.get(q);*/
 					int[] rands = new int[100000];
