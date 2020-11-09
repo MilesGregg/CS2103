@@ -60,59 +60,52 @@ public class CacheTester {
 
 	@Test
 	public void testTimeComplexity () {
-		double[] arr = new double[10];
-		Random rand = new Random();
-		for (int outcounter = 0; outcounter < 1; outcounter++) {
-			double sum = 0;
-			for (int counter = 0; counter < 10; counter++) {
-				Database provider = new Database();
-				long[] times = new long[100];
-				for (int k = 1; k <= 100; k++) {
-					Cache<Integer, String> cache1 = new LRUCache3<>(provider, 1000 * k);
-					/*for (int q = 0; q < 1000 * k; q++)
-						cache1.get(q);*/
-					int[] rands = new int[100000];
-					for(int j = 0; j < rands.length; j++){
-						rands[j] = rand.nextInt(100000);
+		int totalCount = 0;
+		for(int aa = 0; aa < 100; aa++) {
+			Random rand = new Random();
+			for (int outcounter = 0; outcounter < 1; outcounter++) {
+				double sum = 0;
+				for (int counter = 0; counter < 10; counter++) {
+					Database provider = new Database();
+					long[] times = new long[100];
+					for (int k = 1; k <= 100; k++) {
+						Cache<Integer, String> cache1 = new LRUCache2<>(provider, 1000 * k);
+						for (int q = 0; q < 1000 * k; q++)
+							cache1.get(q);
+						int[] rands = new int[100000];
+						for (int j = 0; j < rands.length; j++) {
+							rands[j] = rand.nextInt(1000 * k);
+						}
+						final long start1 = System.currentTimeMillis();
+						for (int j = 0; j < 1000; j++)
+							cache1.get(rands[j]);
+						final long end1 = System.currentTimeMillis();
+						final long timeDiff1 = end1 - start1;
+						times[k - 1] = timeDiff1;
 					}
-					final long start1 = System.currentTimeMillis();
-					for (int j = 0; j < 1000; j++)
-						cache1.get(rands[j]);
-					final long end1 = System.currentTimeMillis();
-					final long timeDiff1 = end1 - start1;
-					times[k - 1] = timeDiff1;
-				}
-				int greater = 0;
-				int equal = 0;
-				int trials = 0;
-				for (int i = 0; i < times.length; i++) {
-					for (int j = i + 1; j < times.length; j++) {
-						trials++;
-						if (times[j] > times[i])
-							greater++;
-						else if (times[j] == times[i])
-							equal++;
+					int greater = 0;
+					int equal = 0;
+					int trials = 0;
+					for (int i = 0; i < times.length; i++) {
+						for (int j = i + 1; j < times.length; j++) {
+							trials++;
+							if (times[j] > times[i])
+								greater++;
+							else if (times[j] == times[i])
+								equal++;
+						}
 					}
+					double greaterFraction = (double) greater / trials;
+					double equalFraction = (double) equal / trials;
+					sum += greaterFraction + equalFraction / 2;
 				}
-				double greaterFraction = (double) greater / trials;
-				double equalFraction = (double) equal / trials;
-				sum += greaterFraction + equalFraction / 2;
-				arr[outcounter] = (greaterFraction + equalFraction/2);
-				long min = Arrays.stream(times).min().getAsLong();
-				long max = Arrays.stream(times).max().getAsLong();
-//				System.out.println(Arrays.toString(times));
-//				System.out.println("greater: " + greaterFraction);
-//				System.out.println("equal: " + equalFraction);
-//				System.out.println(equalFraction/2);
-//				System.out.println("MAX: "+max);
-//				System.out.println("MIN: "+min);
+				if(sum / 10 <= 0.6 && sum / 10 >= 0.4) {
+					System.out.println("SUCCESS: "+sum/10);
+					totalCount++;
+				}
 			}
-			System.out.println(sum);
-//			System.out.println(Arrays.toString(arr));
-			//System.out.println("FINAL: "+sum/10);
-			assertTrue(sum/10 <= 0.6 && sum/10 >= 0.4);
-
 		}
+		System.out.println(totalCount);
 	}
 
 
