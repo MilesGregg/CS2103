@@ -12,11 +12,12 @@ public class LRUCache <T, U> implements Cache <T, U> {
     private final DataProvider <T, U> baseProvider;
 
     // tracks the node that is most recently used and the one that is least recently used
-    private Node mostRecent;
-    private Node leastRecent;
+    private Node head;
+    private Node tail;
 
-    // tracks how many misses the cache finds and the max capacity of the cache
+    // max capacity of the cache
     private int capacity = 0;
+    // tracks how many misses the cache finds and the max capacity of the cache
     private int numberMisses = 0;
 
     /**
@@ -53,11 +54,11 @@ public class LRUCache <T, U> implements Cache <T, U> {
             // if the map is bigger than the capacity then remove a node from the hashmap and linked list
             if (map.size() > capacity) {
                 // remove node from hashmap
-                map.remove(leastRecent.key);
+                map.remove(tail.key);
                 // make the next least recent node the least recent
-                if (leastRecent.next != null)
-                    leastRecent.next.previous = null;
-                leastRecent = leastRecent.next;
+                if (tail.next != null)
+                    tail.next.previous = null;
+                tail = tail.next;
             }
         }
 
@@ -86,13 +87,13 @@ public class LRUCache <T, U> implements Cache <T, U> {
             node.previous.next = node.next;
         else
             // sets the next node as the least recently used node if it is the first node in the list
-            leastRecent = node.next;
+            tail = node.next;
 
         // Move the current node to the mostRecent
-        node.previous = mostRecent;
-        mostRecent.next = node;
-        mostRecent = node;
-        mostRecent.next = null;
+        node.previous = head;
+        head.next = node;
+        head = node;
+        head.next = null;
     }
 
     /**
@@ -104,16 +105,16 @@ public class LRUCache <T, U> implements Cache <T, U> {
         map.put(node.key, node);
 
         // update the leastRecent node with the node we are inserting
-        if (leastRecent == null)
-            leastRecent = node;
+        if (tail == null)
+            tail = node;
         // make the mostRecent the previous and the mostRecent next node the current node
-        if (mostRecent != null) {
-            node.previous = mostRecent;
-            mostRecent.next = node;
+        if (head != null) {
+            node.previous = head;
+            head.next = node;
         }
 
         // save the mostRecent node with the node we are inserting
-        mostRecent = node;
+        head = node;
     }
 
     /**
@@ -122,8 +123,8 @@ public class LRUCache <T, U> implements Cache <T, U> {
      */
     private class Node {
         // key and value values for the current node
-        T key;
-        U value;
+        private final T key;
+        private final U value;
 
         // next and previous nodes in the linked list
         Node next;
