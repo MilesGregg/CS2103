@@ -35,7 +35,7 @@ public class CacheTester {
 
 
 		// Need to instantiate an actual DataProvider
-		Cache<Integer,String> cache = new LRUCache2<>(provider, 5);
+		Cache<Integer,String> cache = new LRUCache<>(provider, 5);
 		String x = cache.get(4);
 		assertEquals(x, "4");
 		String y = cache.get(15);
@@ -60,52 +60,44 @@ public class CacheTester {
 
 	@Test
 	public void testTimeComplexity () {
-		int totalCount = 0;
-		for(int aa = 0; aa < 100; aa++) {
-			Random rand = new Random();
-			for (int outcounter = 0; outcounter < 1; outcounter++) {
-				double sum = 0;
-				for (int counter = 0; counter < 10; counter++) {
-					Database provider = new Database();
-					long[] times = new long[100];
-					for (int k = 1; k <= 100; k++) {
-						Cache<Integer, String> cache1 = new LRUCache2<>(provider, 1000 * k);
-						for (int q = 0; q < 1000 * k; q++)
-							cache1.get(q);
-						int[] rands = new int[100000];
-						for (int j = 0; j < rands.length; j++) {
-							rands[j] = rand.nextInt(1000 * k);
-						}
-						final long start1 = System.currentTimeMillis();
-						for (int j = 0; j < 1000; j++)
-							cache1.get(rands[j]);
-						final long end1 = System.currentTimeMillis();
-						final long timeDiff1 = end1 - start1;
-						times[k - 1] = timeDiff1;
-					}
-					int greater = 0;
-					int equal = 0;
-					int trials = 0;
-					for (int i = 0; i < times.length; i++) {
-						for (int j = i + 1; j < times.length; j++) {
-							trials++;
-							if (times[j] > times[i])
-								greater++;
-							else if (times[j] == times[i])
-								equal++;
-						}
-					}
-					double greaterFraction = (double) greater / trials;
-					double equalFraction = (double) equal / trials;
-					sum += greaterFraction + equalFraction / 2;
+		Random rand = new Random();
+		double sum = 0;
+		for (int counter = 0; counter < 10; counter++) {
+			Database provider = new Database();
+			long[] times = new long[100];
+			for (int k = 1; k <= 100; k++) {
+				Cache<Integer, String> cache1 = new LRUCache<>(provider, 1000 * k);
+				for (int q = 0; q < 1000 * k; q++)
+					cache1.get(q);
+				int[] rands = new int[100000];
+				for (int j = 0; j < rands.length; j++) {
+					rands[j] = rand.nextInt(1000 * k);
 				}
-				if(sum / 10 <= 0.6 && sum / 10 >= 0.4) {
-					System.out.println("SUCCESS: "+sum/10);
-					totalCount++;
+				final long start1 = System.currentTimeMillis();
+				for (int j = 0; j < 1000; j++)
+					cache1.get(rands[j]);
+				final long end1 = System.currentTimeMillis();
+				final long timeDiff1 = end1 - start1;
+				times[k - 1] = timeDiff1;
+			}
+			int greater = 0;
+			int equal = 0;
+			int trials = 0;
+			for (int i = 0; i < times.length; i++) {
+				for (int j = i + 1; j < times.length; j++) {
+					trials++;
+					if (times[j] > times[i])
+						greater++;
+					else if (times[j] == times[i])
+						equal++;
 				}
 			}
+			double greaterFraction = (double) greater / trials;
+			double equalFraction = (double) equal / trials;
+			sum += greaterFraction + equalFraction / 2;
 		}
-		System.out.println(totalCount);
+		System.out.println(sum/10);
+		assertTrue(sum / 10 <= 0.6 && sum / 10 >= 0.4);
 	}
 
 
@@ -115,7 +107,7 @@ public class CacheTester {
 	public void testLRUWithLargeNumbers(){
 		Database provider = new Database();
 		// Need to instantiate an actual DataProvider
-		Cache<Integer,String> cache = new LRUCache2<>(provider, 500);
+		Cache<Integer,String> cache = new LRUCache<>(provider, 500);
 		// Every get() operation here is a miss, so the number of misses should increase by 1 each time
 		for(int i = 0; i < 750; i++){
 			cache.get(i);
@@ -137,7 +129,7 @@ public class CacheTester {
 	public void testLRUWithLargeNumbers2(){
 		Database2 provider = new Database2();
 		// Need to instantiate an actual DataProvider
-		Cache<Double, int[]> cache = new LRUCache2<>(provider, 500);
+		Cache<Double, int[]> cache = new LRUCache<>(provider, 500);
 		// Every get() operation here is a miss, so the number of misses should increase by 1 each time
 		for(double i = 0; i < 750; i++) {
 			cache.get(i);
@@ -155,97 +147,79 @@ public class CacheTester {
 		}
 	}
 
+	@Test
+	public void testEviction(){
+		DataProvider<Integer, String> provider = new Database();
+		Cache<Integer, String> cache = new LRUCache<>(provider, 4);
+		// every get() operation here is a miss and should increase the number of misses by 1
+		for(int i = 0; i < 4; i++)
+			cache.get(i);
+		assertEquals(cache.getNumMisses(), 4);
+		cache.get(0);
+		// this is a hit and should not change the number of misses
+		assertEquals(cache.getNumMisses(), 4);
+		// this is a miss
+		cache.get(5);
+		assertEquals(cache.getNumMisses(), 5);
+		// this is a miss because "1" has been evicted
+		cache.get(1);
+		assertEquals(cache.getNumMisses(), 6);
+		// this is a hit because "3" is still in the cache
+		cache.get(3);
+		assertEquals(cache.getNumMisses(), 6);
+	}
 
 	@Test
-	public void testTimeComplexity2 () {
-		for (int counter = 0; counter < 20; counter++) {
-			final int sizeMul = 1000;
-
-			DataProvider<Integer, String> provider = new Database();
-
-			final int trials = 100;
-			double[] averageTimeCosts = new double[trials];
-
-			for (int i = 1; i <= trials; i++) {
-				double averageTime = getAverageTimeCost(provider, sizeMul * i);
-			/*if (averageTime < 0.45 || averageTime == 0.0) {
-				averageTimeCosts[i - 1] = averageTime;
-			}*/
-				averageTimeCosts[i - 1] = averageTime;
-			}
-
-			//System.out.println(Arrays.toString(averageTimeCosts));
-
-			int greater = 0;
-			int equal = 0;
-			int count = 0;
-			for (int i = 0; i < averageTimeCosts.length; i++) {
-				for (int j = i + 1; j < averageTimeCosts.length; j++) {
-					count++;
-					if (averageTimeCosts[j] > averageTimeCosts[i])
-						greater++;
-					else if (averageTimeCosts[j] == averageTimeCosts[i])
-						equal++;
-				}
-			}
-			double greaterFraction = (double) greater / count;
-			System.out.println(greaterFraction);
-
-			/*int count = 0, greater = 0, equal = 0;
-
-			for (int i = 0; i < averageTimeCosts.length; i += 2) {
-				count++;
-				if (averageTimeCosts[i + 1] > averageTimeCosts[i]) {
-					greater++;
-				}
-			}
-
-			System.out.println((double) greater / count);*/
-		}
-	}
-//		//System.out.println(total);
-//		System.out.println(Arrays.toString(averageTimeCosts));
-//		for (int i = 0; i < averageTimeCosts.length; i++) {
-//			for (int j = i + 1; j < averageTimeCosts.length; j++) {
-//				total++;
-//				if (averageTimeCosts[j] > averageTimeCosts[i])
-//					greater++;
-//				else if (averageTimeCosts[j] == averageTimeCosts[i])
-//					equal++;
-//			}
-//		}
-//		double greaterFraction = (double) greater / total;
-//		double equalFraction = (double) equal / total;
-//		System.out.println(greaterFraction);
-//		System.out.println(greaterFraction + equalFraction / 2);
-//		assertTrue(greaterFraction + equalFraction / 2 > 0.4 && greaterFraction + equalFraction / 2 < 0.6);
-//
-//	}
-//
-	public double getAverageTimeCost (DataProvider<Integer, String> provider, int capacity) {
-		Cache<Integer, String> chache = new LRUCache3<>(provider, capacity);
-
-		final int trials = 100;
-		final int range = 100000;
-
-		for(int j = 0; j < capacity; j++){
-			chache.get(j);
-		}
-
-		long totalTime = 0;
-		Random rand = new Random();
-		for (int i = 0; i < trials; i++) {
-			final long start = System.nanoTime();
-			for (int j = 0; j < 100; j++) {
-				//rand.nextInt(range);
-				chache.get(i);
-			}
-			final long end = System.nanoTime();
-			totalTime += (end - start);
-		}
-
-		return (double) totalTime/trials;
+	public void testGetLRU(){
+		DataProvider<Double, int[]> provider = new Database2();
+		Cache<Double, int[]> cache = new LRUCache<>(provider, 3);
+		// these are all misses
+		for(double i = 3.5; i < 6.5; i++)
+			cache.get(i);
+		assertEquals(cache.getNumMisses(), 3);
+		// this is a hit on the least recently used item
+		cache.get(3.5);
+		assertEquals(cache.getNumMisses(), 3);
 	}
 
+	@Test
+	public void testGetMRU(){
+		DataProvider<Double, int[]> provider = new Database2();
+		Cache<Double, int[]> cache = new LRUCache<>(provider, 3);
+		// these are all misses
+		for(double i = 3.5; i < 6.5; i++)
+			cache.get(i);
+		assertEquals(cache.getNumMisses(), 3);
+		// this is a hit on the most recently used item
+		cache.get(5.5);
+		assertEquals(cache.getNumMisses(), 3);
+	}
 
+	@Test
+	public void testProvider() {
+		Database provider = new Database();
+		final Cache<Integer,String> cache = new LRUCache<>(provider, 25);
+		// miss
+		assertEquals(cache.get(5), "5");
+		assertEquals(cache.getNumMisses(), 1);
+		// miss
+		assertEquals(cache.get(7), "7");
+		assertEquals(cache.getNumMisses(), 2);
+		// miss
+		assertEquals(cache.get(3), "3");
+		assertEquals(cache.getNumMisses(), 3);
+		// miss
+		assertEquals(cache.get(10), "10");
+		assertEquals(cache.getNumMisses(), 4);
+		// hit
+		assertEquals(cache.get(7), "7");
+		assertEquals(cache.getNumMisses(), 4);
+		// hit
+		assertEquals(cache.get(5), "5");
+		assertEquals(cache.getNumMisses(), 4);
+		// miss
+		assertEquals(cache.get(2), "2");
+		assertEquals(cache.getNumMisses(), 5);
+	}
+	
 }

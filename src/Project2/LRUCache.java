@@ -7,154 +7,138 @@ import java.util.Map;
  * An implementation of <tt>Cache</tt> that uses a least-recently-used (LRU)
  * eviction policy.
  */
-public class LRUCache<T, U> implements Cache<T, U> {
+public class LRUCache <T, U> implements Cache <T, U> {
+    private final Map <T, Node> map = new HashMap <>();
+    private final DataProvider <T, U> baseProvider;
 
-	private final Map<T, Node> map = new HashMap<>();
-	private final DataProvider<T, U> baseProvider;
-	private final DoubleLinkedList doubleLinkedList = new DoubleLinkedList();
+    // tracks the node that is most recently used and the one that is least recently used
+    private Node mostRecent;
+    private Node leastRecent;
 
-	private int capacity = 0;
-	private int numberMisses = 0;
+    // tracks how many misses the cache finds and the max capacity of the cache
+    private int capacity = 0;
+    private int numberMisses = 0;
 
-	private Node mostRecent;
-	private Node leastRecent;
+    /**
+     * @param provider the data provider to consult for a cache miss
+     * @param capacity the exact number of (key,value) pairs to store in the cache
+     */
+    public LRUCache (DataProvider <T, U> provider, int capacity) {
+        this.baseProvider = provider;
+        this.capacity = capacity;
+    }
 
-	/**
-	 * @param provider the data provider to consult for a cache miss
-	 * @param capacity the exact number of (key,value) pairs to store in the cache
-	 */
-	public LRUCache (DataProvider<T, U> provider, int capacity) {
-		this.baseProvider = provider;
-		this.capacity = capacity;
-	}
+    /**
+     * Returns the value associated with the specified key, and updates the corresponding node's position in the linked list
+     * @param key the key
+     * @return the value associated with the key
+     */
+    public U get (T key) {
+        Node node;
 
-	/**
-	 * Returns the value associated with the specified key.
-	 * @param key the key
-	 * @return the value associated with the key
-	 */
-	public U get (T key) {
-		Node node;
-		U value;
-		System.out.println(map);
+        // return node right away if it is already in the hashmap
+        if (map.containsKey(key)) {
+            node = map.get(key);
+            moveToFront(node);
+        } else {
+            // increment the number of misses the cache has
+            numberMisses++;
 
-		if (this.map.containsKey(key)) {
-			node = map.get(key);
-			System.out.println(node.value);
-			// make it move to front
-			moveToFront(node, doubleLinkedList);
-			value = node.value;
-			System.out.println(node.value);
+            // make new node to add to the hashmap
+            node = new Node(key, baseProvider.get(key));
 
-		}
-		else {
-			value = baseProvider.get(key);
-			Node newNode = new Node(value, null, null);
-			map.put(key, newNode);
-			insert(newNode, doubleLinkedList);
-			numberMisses++;
-			if (map.size() > capacity) {
-				doubleLinkedList.removeLast();
-				map.remove(key);
-			}
+            // add the node to the linkedlist
+            insert(node);
 
-		}
-
-		return value;  // TODO -- implement!
-	}
-
-	/**
-	 * Returns the number of cache misses since the object's instantiation.
-	 * @return the number of cache misses since the object's instantiation.
-	 */
-	public int getNumMisses () {
-		return numberMisses;
-	}
-
-	private void insert (Node node, DoubleLinkedList doubleLinkedList) {
-		doubleLinkedList.addToFront(node);
-		if (leastRecent == null) {
-			leastRecent = doubleLinkedList.head;
-		}
-
-		if (mostRecent != null) {
-			doubleLinkedList.head = mostRecent;
-			mostRecent.next = doubleLinkedList.head;
-		}
-
-		mostRecent = doubleLinkedList.head;
-	}
-
-	private void moveToFront(Node node, DoubleLinkedList doubleLinkedList){
-		if(node.prev != null)
-			node.prev.next = node.next;
-		node.next.prev = node.prev;
-		node.prev = null;
-		node.next = doubleLinkedList.head;
-		doubleLinkedList.head = node;
-	}
-
-	private class Node{
-		private U value;
-		private Node next;
-		private Node prev;
-
-		private Node (U value, Node next, Node prev){
-			this.value = value;
-			this.next = next;
-			this.prev = prev;
-		}
-
-	}
+            // if the map is bigger than the capacity then remove a node from the hashmap and linked list
+            if (map.size() > capacity) {
+                // remove node from hashmap
+                map.remove(leastRecent.key);
+                // make the next least recent node the least recent
+                if (leastRecent.next != null)
+                    leastRecent.next.previous = null;
+                leastRecent = leastRecent.next;
+            }
+        }
+        return node.value;
 
 
-	private class DoubleLinkedList {
-		Node head;
-		Node tail;
+    }
 
-		private DoubleLinkedList() {
-			head = null;
-			tail = null;
-		}
+    /**
+     * Returns the number of cache misses since the object's instantiation.
+     * @return the number of cache misses since the object's instantiation.
+     */
+    public int getNumMisses () {
+        return numberMisses;
+    }
 
-		public Node removeLast(){
-			Node out = tail;
-			tail.prev.next = null;
-			tail = tail.prev;
-			return out;
-		}
+    /**
+     * move the current node to the mostRecent node
+     * @param node - node object we are moving
+     */
+    private void moveToFront (Node node) {
+        if(node.next != null)
+            // creates a link from the next node to the previous node
+            node.next.previous = node.previous;
 
-		public void add(Node value){
-			if (head == null) {
-				head = value;
-				tail = value;
-			}
-			else {
-				tail.next = value;
-				value.prev = tail;
-				tail = value;
-			}
-		}
+        if (node.previous != null)
+            // creates a link from the previous node to the next node
+            node.previous.next = node.next;
+        else
+            // sets the next node as the least recently used node if it is the first node in the list
+            leastRecent = node.next;
 
-		public void addToFront(Node node){
+        // Move the current node to the mostRecent
+        node.previous = mostRecent;
+        mostRecent.next = node;
+        mostRecent = node;
+        mostRecent.next = null;
+    }
 
-			if (head == null) {
-				head = node;
-				tail = node;
-			}
-			else{
-				head.prev = node;
-				node.next = head;
-				head = node;
-			}
-		}
-		private void remove(Node value) {
-			if(value.next == null)
-				value.prev.next = null;
-			value.prev.next = value.next;
-			value.next.prev = value.prev;
-		}
-	}
+    /**
+     * insert node into hashmap
+     * @param node - node to be inserted into the hashmap
+     */
+    private void insert (Node node) {
+        // insert into hashmap
+        map.put(node.key, node);
 
+        // update the leastRecent node with the node we are inserting
+        if (leastRecent == null) {
+            leastRecent = node;
+        }
+        // make the mostRecent the previous and the mostRecent next node the current node
+        if (mostRecent != null) {
+            node.previous = mostRecent;
+            mostRecent.next = node;
+        }
 
+        // save the mostRecent node with the node we are inserting
+        mostRecent = node;
+    }
+
+    /**
+     * The Node class contains the contents for the doubly linked list for connecting the nodes to each other.
+     * Each node has two pointers for the next and previous nodes in the linked list.
+     */
+    private class Node {
+        // key and value values for the current node
+        T key;
+        U value;
+
+        // next and previous nodes in the linked list
+        Node next;
+        Node previous;
+
+        /**
+         * setting up the node with their specified key and value values
+         * @param key - the current node key
+         * @param value - the current node value
+         */
+        private Node (T key, U value) {
+            this.key = key;
+            this.value = value;
+        }
+    }
 }
