@@ -1,11 +1,8 @@
 package Project2;
 
 import static org.junit.Assert.*;
-import org.junit.Before;
 import org.junit.Test;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.*;
 
 /**
@@ -14,7 +11,6 @@ import java.util.*;
 public class CacheTester {
 
 	private static class Database implements DataProvider<Integer, String> {
-
 		@Override
 		public String get(Integer key) {
 			return String.valueOf(key);
@@ -22,17 +18,15 @@ public class CacheTester {
 	}
 
 	private static class Database2 implements DataProvider<Double, int[]> {
-
-
 		@Override
 		public int[] get(Double key) {
 			return new int[] {(int) (double) key, (int) (double) key + 1};
 		}
 	}
+
 	@Test
 	public void leastRecentlyUsedIsCorrect () {
 		Database provider = new Database();
-
 
 		// Need to instantiate an actual DataProvider
 		Cache<Integer,String> cache = new LRUCache<>(provider, 5);
@@ -64,21 +58,20 @@ public class CacheTester {
 		double sum = 0;
 		for (int counter = 0; counter < 10; counter++) {
 			Database provider = new Database();
-			long[] times = new long[25];
-			for (int k = 20; k <= 500; k+=20) {
+			long[] times = new long[100];
+			for (int k = 1; k <= 100; k++) {
 				Cache<Integer, String> cache1 = new LRUCache<>(provider, 1000 * k);
 				for (int q = 0; q < 1000 * k; q++)
 					cache1.get(q);
 				int[] rands = new int[100000];
-				for (int j = 0; j < rands.length; j++) {
+				for (int j = 0; j < rands.length; j++)
 					rands[j] = rand.nextInt(1000 * k);
-				}
 				final long start1 = System.currentTimeMillis();
-				for (int i : rands)
-					cache1.get(i);
+				for (int j = 0; j < 100000; j++)
+					cache1.get(rands[j]);
 				final long end1 = System.currentTimeMillis();
 				final long timeDiff1 = end1 - start1;
-				times[(k - 20)/20] = timeDiff1;
+				times[k - 1] = timeDiff1;
 			}
 			int greater = 0;
 			int equal = 0;
@@ -100,11 +93,8 @@ public class CacheTester {
 		assertTrue(sum / 10 <= 0.6 && sum / 10 >= 0.4);
 	}
 
-
-
-
 	@Test
-	public void testLRUWithLargeNumbers(){
+	public void testLRUWithLargeNumbers () {
 		Database provider = new Database();
 		// Need to instantiate an actual DataProvider
 		Cache<Integer,String> cache = new LRUCache<>(provider, 500);
@@ -126,7 +116,7 @@ public class CacheTester {
 	}
 
 	@Test
-	public void testLRUWithLargeNumbers2(){
+	public void testLRUWithLargeNumbers2 () {
 		Database2 provider = new Database2();
 		// Need to instantiate an actual DataProvider
 		Cache<Double, int[]> cache = new LRUCache<>(provider, 500);
@@ -148,7 +138,7 @@ public class CacheTester {
 	}
 
 	@Test
-	public void testEviction(){
+	public void testEviction () {
 		DataProvider<Integer, String> provider = new Database();
 		Cache<Integer, String> cache = new LRUCache<>(provider, 4);
 		// every get() operation here is a miss and should increase the number of misses by 1
@@ -170,7 +160,7 @@ public class CacheTester {
 	}
 
 	@Test
-	public void testGetLRU(){
+	public void testGetLRU () {
 		DataProvider<Double, int[]> provider = new Database2();
 		Cache<Double, int[]> cache = new LRUCache<>(provider, 3);
 		// these are all misses
@@ -183,7 +173,7 @@ public class CacheTester {
 	}
 
 	@Test
-	public void testGetMRU(){
+	public void testGetMRU () {
 		DataProvider<Double, int[]> provider = new Database2();
 		Cache<Double, int[]> cache = new LRUCache<>(provider, 3);
 		// these are all misses
@@ -196,7 +186,7 @@ public class CacheTester {
 	}
 
 	@Test
-	public void testProvider() {
+	public void testProvider () {
 		Database provider = new Database();
 		final Cache<Integer,String> cache = new LRUCache<>(provider, 25);
 		// miss
