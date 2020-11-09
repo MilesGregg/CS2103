@@ -70,9 +70,8 @@ public class CacheTester {
 				for (int q = 0; q < 1000 * k; q++)
 					cache1.get(q);
 				int[] rands = new int[100000];
-				for (int j = 0; j < rands.length; j++) {
+				for (int j = 0; j < rands.length; j++)
 					rands[j] = rand.nextInt(1000 * k);
-				}
 				final long start1 = System.currentTimeMillis();
 				for (int j = 0; j < 1000; j++)
 					cache1.get(rands[j]);

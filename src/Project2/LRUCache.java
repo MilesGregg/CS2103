@@ -60,9 +60,8 @@ public class LRUCache <T, U> implements Cache <T, U> {
                 leastRecent = leastRecent.next;
             }
         }
+
         return node.value;
-
-
     }
 
     /**
@@ -105,9 +104,8 @@ public class LRUCache <T, U> implements Cache <T, U> {
         map.put(node.key, node);
 
         // update the leastRecent node with the node we are inserting
-        if (leastRecent == null) {
+        if (leastRecent == null)
             leastRecent = node;
-        }
         // make the mostRecent the previous and the mostRecent next node the current node
         if (mostRecent != null) {
             node.previous = mostRecent;
