@@ -64,8 +64,8 @@ public class CacheTester {
 		double sum = 0;
 		for (int counter = 0; counter < 10; counter++) {
 			Database provider = new Database();
-			long[] times = new long[100];
-			for (int k = 1; k <= 100; k++) {
+			long[] times = new long[25];
+			for (int k = 20; k <= 500; k+=20) {
 				Cache<Integer, String> cache1 = new LRUCache<>(provider, 1000 * k);
 				for (int q = 0; q < 1000 * k; q++)
 					cache1.get(q);
@@ -74,11 +74,11 @@ public class CacheTester {
 					rands[j] = rand.nextInt(1000 * k);
 				}
 				final long start1 = System.currentTimeMillis();
-				for (int j = 0; j < 1000; j++)
-					cache1.get(rands[j]);
+				for (int i : rands)
+					cache1.get(i);
 				final long end1 = System.currentTimeMillis();
 				final long timeDiff1 = end1 - start1;
-				times[k - 1] = timeDiff1;
+				times[(k - 20)/20] = timeDiff1;
 			}
 			int greater = 0;
 			int equal = 0;
