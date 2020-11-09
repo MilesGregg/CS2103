@@ -1,11 +1,8 @@
 package Project2;
 
 import static org.junit.Assert.*;
-import org.junit.Before;
 import org.junit.Test;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.*;
 
 /**
@@ -26,6 +23,7 @@ public class CacheTester {
 			return new int[] {(int) (double) key, (int) (double) key + 1};
 		}
 	}
+
 	@Test
 	public void leastRecentlyUsedIsCorrect () {
 		Database provider = new Database();
