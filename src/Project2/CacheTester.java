@@ -143,42 +143,50 @@ public class CacheTester {
 	}
 
 	/**
+	 * for 100 values of k, determine how long it takes the get() operation to run on a
+	 * cache of size 1000*k
+	 * @return an array of the times
+	 */
+	private long[] getTimes(){
+		final Random rand = new Random();
+		final int CAPACITY_MULTIPLIER = 1000;
+		final int NUM_GET_OPERATIONS = 100000;
+		final int NUM_K_VALUES = 100;
+		Database provider = new Database();
+		long[] times = new long[NUM_K_VALUES];
+		for (int k = 1; k <= NUM_K_VALUES; k++) {
+			int capacity = CAPACITY_MULTIPLIER * k;
+			Cache<Integer, String> cache1 = new LRUCache<>(provider, capacity);
+			for (int q = 0; q < capacity; q++)
+				cache1.get(q);
+			// stores 100,000 random integers between 0 and capacity - 1
+			int[] rands = new int[NUM_GET_OPERATIONS];
+			for (int j = 0; j < rands.length; j++)
+				rands[j] = rand.nextInt(capacity);
+			// runs 100,000 get() operations and times it
+			final long start1 = System.currentTimeMillis();
+			for (int j = 0; j < NUM_GET_OPERATIONS; j++)
+				cache1.get(rands[j]);
+			final long end1 = System.currentTimeMillis();
+			final long timeDiff1 = end1 - start1;
+			// stores the time in an array
+			times[k - 1] = timeDiff1;
+		}
+		return times;
+	}
+
+	/**
 	 * Tests that the get() operations on the cache run in O(1) time complexity
 	 */
 	@Test(timeout=90000)
 	public void testTimeComplexity () {
 		final int TOTAL_TRIALS = 10;
-		final int CAPACITY_MULTIPLIER = 1000;
-		final int NUM_GET_OPERATIONS = 100000;
-		final int NUM_K_VALUES = 100;
 		final double LOWER_BOUND = 0.1;
 		final double UPPER_BOUND = 0.9;
-		final Random rand = new Random();
 		double sum = 0;
 		// average the percentages over 10 trials
 		for (int counter = 0; counter < TOTAL_TRIALS; counter++) {
-			Database provider = new Database();
-			// for 100 values of k, determine how long it takes the get() operation to run on a
-			// cache of size 1000*k
-			long[] times = new long[NUM_K_VALUES];
-			for (int k = 1; k <= NUM_K_VALUES; k++) {
-				int capacity = CAPACITY_MULTIPLIER * k;
-				Cache<Integer, String> cache1 = new LRUCache<>(provider, capacity);
-				for (int q = 0; q < capacity; q++)
-					cache1.get(q);
-				// stores 100,000 random integers between 0 and capacity - 1
-				int[] rands = new int[NUM_GET_OPERATIONS];
-				for (int j = 0; j < rands.length; j++)
-					rands[j] = rand.nextInt(capacity);
-				// runs 100,000 get() operations and times it
-				final long start1 = System.currentTimeMillis();
-				for (int j = 0; j < NUM_GET_OPERATIONS; j++)
-					cache1.get(rands[j]);
-				final long end1 = System.currentTimeMillis();
-				final long timeDiff1 = end1 - start1;
-				// stores the time in an array
-				times[k - 1] = timeDiff1;
-			}
+			long[] times = getTimes();
 			// find what percentage of the time times[j] > times[i] for j > i and what percentage
 			// of the time times[j] = times[i] for j > i
 			int greater = 0;

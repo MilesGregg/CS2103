@@ -29,14 +29,16 @@ public class LRUCache <T, U> implements Cache <T, U> {
 
 
     /**
-     * Returns the value associated with the specified key, and updates the corresponding node's position in the linked list
+     * Returns the value associated with the specified key, and updates the
+     * corresponding node's position in the linked list
      * @param key the key
      * @return the value associated with the key
      */
     public U get (T key) {
         Node node;
 
-        // return node right away if it is already in the hashmap
+        // return node right away if it is already in the hashmap and move it to the front of
+        // the linkedlist
         if (map.containsKey(key)) {
             node = map.get(key);
             moveToFront(node);
@@ -54,7 +56,7 @@ public class LRUCache <T, U> implements Cache <T, U> {
             if (map.size() > capacity) {
                 // remove node from hashmap
                 map.remove(tail.key);
-                // make the next least recent node the least recent
+                // remove the least recently used node from the linked list
                 removeNode(tail);
             }
         }
@@ -124,7 +126,8 @@ public class LRUCache <T, U> implements Cache <T, U> {
     }
 
     /**
-     * The Node class contains the contents for the doubly linked list for connecting the nodes to each other.
+     * The Node class contains the contents for the doubly linked list for connecting the
+     * nodes to each other.
      * Each node has two pointers for the next and previous nodes in the linked list.
      */
     private class Node {
