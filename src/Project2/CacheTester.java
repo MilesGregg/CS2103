@@ -1,5 +1,3 @@
-package Project2;
-
 import static org.junit.Assert.*;
 import org.junit.Test;
 
@@ -9,7 +7,9 @@ import java.util.*;
  * Code to test an <tt>LRUCache</tt> implementation.
  */
 public class CacheTester {
-
+	/**
+	 * A database that maps Integers to Strings
+	 */
 	private static class Database implements DataProvider<Integer, String> {
 		@Override
 		public String get(Integer key) {
@@ -17,6 +17,9 @@ public class CacheTester {
 		}
 	}
 
+	/**
+	 * A database that maps doubles to int arrays
+	 */
 	private static class Database2 implements DataProvider<Double, int[]> {
 		@Override
 		public int[] get(Double key) {
@@ -24,55 +27,134 @@ public class CacheTester {
 		}
 	}
 
+	/**
+	 * Tests that values retrieved from the dataprovider are actually stored in the cache
+	 */
 	@Test
-	public void leastRecentlyUsedIsCorrect () {
-		Database provider = new Database();
+	public void testStorage(){
+		DataProvider<Double, int[]> provider = new Database2();
+		Cache<Double, int[]> cache = new LRUCache<>(provider, 3);
+		cache.get(3.4);
+		assertEquals(cache.getNumMisses(), 1);
+		// these are both hits, so the number of misses should not change
+		cache.get(3.4);
+		cache.get(3.4);
+		assertEquals(cache.getNumMisses(), 1);
+	}
 
-		// Need to instantiate an actual DataProvider
+	/**
+	 * Tests that the get() function works properly and that LRU eviction is implemented correctly
+	 */
+	@Test
+	public void testGetAndEviction () {
+		Database provider = new Database();
 		Cache<Integer,String> cache = new LRUCache<>(provider, 5);
+		// miss
 		String x = cache.get(4);
 		assertEquals(x, "4");
+		// miss
 		String y = cache.get(15);
 		assertEquals(y, "15");
 		String z = cache.get(-4);
+		// miss
 		assertEquals(z, "-4");
 		assertEquals(cache.getNumMisses(), 3);
-		String a = cache.get(-4);
+		// hit, getNumMisses() should still be 3
+		cache.get(-4);
 		assertEquals(cache.getNumMisses(), 3);
+		// miss
 		String b = cache.get(23);
 		assertEquals(b, "23");
+		// miss
 		String c = cache.get(1);
 		assertEquals(c, "1");
 		assertEquals(cache.getNumMisses(), 5);
-		String d = cache.get(15);
+		// hit, getNumMisses() should still be 5
+		cache.get(15);
 		assertEquals(cache.getNumMisses(), 5);
-		String f = cache.get(7);
+		// miss
+		cache.get(7);
 		assertEquals(cache.getNumMisses(), 6);
-		String e = cache.get(4);
+		// miss because of eviction
+		cache.get(4);
 		assertEquals(cache.getNumMisses(), 7);
 	}
 
 	@Test
+	public void leastRecentlyUsedIsCorrect () {
+		DataProvider<Double, int[]> provider = new Database2();
+		Cache<Double, int[]> cache = new LRUCache<Double, int[]>(provider, 2);
+		cache.get(1.2);
+		cache.get(4.5);
+		// cache is now at capacity (storing 2 items)
+		assertEquals(cache.getNumMisses(), 2);
+		cache.get(9.8);
+		assertEquals(cache.getNumMisses(), 3);
+		// cache should have evicted 1.2, as it was the least recently used
+		cache.get(1.2);
+		// this should be a miss, so the number of misses should now be 4.
+		assertEquals(cache.getNumMisses(), 4);
+	}
+
+	@Test
+	public void leastRecentlyUsedIsCorrect2 () {
+		DataProvider<Integer, String> provider = new Database();
+		Cache<Integer, String> cache = new LRUCache<>(provider, 2);
+		cache.get(1);
+		cache.get(4);
+		// cache is now at capacity (storing 2 items)
+		assertEquals(cache.getNumMisses(), 2);
+		// hit, number of misses should not change
+		cache.get(1);
+		assertEquals(cache.getNumMisses(), 2);
+		// miss
+		cache.get(5);
+		assertEquals(cache.getNumMisses(), 3);
+		// cache should have evicted 4, as it was the least recently used
+		cache.get(4);
+		// this should be a miss because 4 was evicted, so the number of misses should now be 4.
+		assertEquals(cache.getNumMisses(), 4);
+	}
+
+	/**
+	 * Tests that the get() operations on the cache run in O(1) time complexity
+	 */
+	@Test(timeout=90000)
 	public void testTimeComplexity () {
+		int TOTAL_TRIALS = 10;
+		int CAPACITY_MULTIPLIER = 1000;
+		int NUM_GET_OPERATIONS = 100000;
+		int NUM_K_VALUES = 100;
+		double LOWER_BOUND = 0.1;
+		double UPPER_BOUND = 0.9;
 		Random rand = new Random();
 		double sum = 0;
-		for (int counter = 0; counter < 10; counter++) {
+		// average the percentages over 10 trials
+		for (int counter = 0; counter < TOTAL_TRIALS; counter++) {
 			Database provider = new Database();
-			long[] times = new long[100];
-			for (int k = 1; k <= 100; k++) {
-				Cache<Integer, String> cache1 = new LRUCache<>(provider, 1000 * k);
-				for (int q = 0; q < 1000 * k; q++)
+			// for 100 values of k, determine how long it takes the get() operation to run on a
+			// cache of size 1000*k
+			long[] times = new long[NUM_K_VALUES];
+			for (int k = 1; k <= NUM_K_VALUES; k++) {
+				int capacity = CAPACITY_MULTIPLIER * k;
+				Cache<Integer, String> cache1 = new LRUCache<>(provider, capacity);
+				for (int q = 0; q < capacity; q++)
 					cache1.get(q);
-				int[] rands = new int[100000];
+				// stores 100,000 random integers between 0 and capacity - 1
+				int[] rands = new int[NUM_GET_OPERATIONS];
 				for (int j = 0; j < rands.length; j++)
-					rands[j] = rand.nextInt(1000 * k);
+					rands[j] = rand.nextInt(capacity);
+				// runs 100,000 get() operations and times it
 				final long start1 = System.currentTimeMillis();
-				for (int j = 0; j < 100000; j++)
+				for (int j = 0; j < NUM_GET_OPERATIONS; j++)
 					cache1.get(rands[j]);
 				final long end1 = System.currentTimeMillis();
 				final long timeDiff1 = end1 - start1;
+				// stores the time in an array
 				times[k - 1] = timeDiff1;
 			}
+			// find what percentage of the time times[j] > times[i] for j > i and what percentage
+			// of the time times[j] = times[i] for j > i
 			int greater = 0;
 			int equal = 0;
 			int trials = 0;
@@ -85,12 +167,15 @@ public class CacheTester {
 						equal++;
 				}
 			}
+			// records the percentage of the time when times[j] >= times[i] but only counts
+			// the equal cases half as much in order to create balance.
 			double greaterFraction = (double) greater / trials;
 			double equalFraction = (double) equal / trials;
 			sum += greaterFraction + equalFraction / 2;
 		}
-		System.out.println(sum/10);
-		assertTrue(sum / 10 <= 0.6 && sum / 10 >= 0.4);
+		double average = sum / TOTAL_TRIALS;
+		// checks that the average percentage is between 0.1 and 0.9
+		assertTrue(average <= UPPER_BOUND && average >= LOWER_BOUND);
 	}
 
 	@Test
@@ -99,16 +184,18 @@ public class CacheTester {
 		// Need to instantiate an actual DataProvider
 		Cache<Integer,String> cache = new LRUCache<>(provider, 500);
 		// Every get() operation here is a miss, so the number of misses should increase by 1 each time
+		// after this, the cache should store values from 250 to 749.
 		for(int i = 0; i < 750; i++){
 			cache.get(i);
 			assertEquals(cache.getNumMisses(), i+1);
 		}
 		// every get() operation here is a hit, so the number of misses should not change
-		for(int j = 499; j >= 250; j--){
+		for(int j = 749; j >= 250; j--){
 			cache.get(j);
 			assertEquals(cache.getNumMisses(), 750);
 		}
-		// every get() operation here is a miss again, so the number of misses should increase by 1 each time
+		// every get() operation here is a miss again because all of these values have been evicted
+		// so the number of misses should increase by 1 each time
 		for(int k = 249; k >= 0; k--){
 			cache.get(k);
 			assertEquals(cache.getNumMisses(), 750 + 250 - k);
@@ -211,5 +298,7 @@ public class CacheTester {
 		assertEquals(cache.get(2), "2");
 		assertEquals(cache.getNumMisses(), 5);
 	}
+
+
 	
 }
