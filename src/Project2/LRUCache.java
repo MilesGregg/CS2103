@@ -27,6 +27,7 @@ public class LRUCache <T, U> implements Cache <T, U> {
         this.capacity = capacity;
     }
 
+
     /**
      * Returns the value associated with the specified key, and updates the corresponding node's position in the linked list
      * @param key the key
@@ -46,7 +47,7 @@ public class LRUCache <T, U> implements Cache <T, U> {
             // make new node to add to the hashmap
             node = new Node(key, baseProvider.get(key));
 
-            // add the node to the linkedlist
+            // add the node to the front of the linkedlist
             insert(node);
 
             // if the map is bigger than the capacity then remove a node from the hashmap and linked list
@@ -54,13 +55,31 @@ public class LRUCache <T, U> implements Cache <T, U> {
                 // remove node from hashmap
                 map.remove(tail.key);
                 // make the next least recent node the least recent
-                if (tail.next != null)
-                    tail.next.previous = null;
-                tail = tail.next;
+                removeNode(tail);
             }
         }
 
         return node.value;
+    }
+
+    /**
+     * Removes a node from the linkedlist
+     * @param node the node to be removed from the linkedlist
+     */
+    private void removeNode(Node node){
+
+        if(node.previous != null)
+            // sets the previous node's "next pointer" to the next node
+            node.previous.next = node.next;
+        else
+            // sets the head to the next node if it is the first node
+            head = node.next;
+        if(node.next != null)
+            // sets the next node's "previous pointer" to the previous node
+            node.next.previous = node.previous;
+        else
+            // sets the tail to the previous node if it's the last node
+            tail = node.previous;
     }
 
     /**
@@ -76,39 +95,28 @@ public class LRUCache <T, U> implements Cache <T, U> {
      * @param node - node object we are moving
      */
     private void moveToFront (Node node) {
-        if(node.next != null)
-            // creates a link from the next node to the previous node
-            node.next.previous = node.previous;
-
-        if (node.previous != null)
-            // creates a link from the previous node to the next node
-            node.previous.next = node.next;
-        else
-            // sets the next node as the least recently used node if it is the first node in the list
-            tail = node.next;
-
-        // Move the current node to the mostRecent
-        node.previous = head;
-        head.next = node;
-        head = node;
-        head.next = null;
+        // removes the node from the list
+        removeNode(node);
+        // inserts the node at the front of the list
+        insert(node);
     }
 
     /**
-     * insert node into hashmap
-     * @param node - node to be inserted into the hashmap
+     * insert node into hashmap and front of linkedlist
+     * @param node - node to be inserted into the hashmap and front of linkedlist
      */
     private void insert (Node node) {
         // insert into hashmap
         map.put(node.key, node);
 
         // update the leastRecent node with the node we are inserting
+        node.previous = null;
         if (tail == null)
             tail = node;
         // make the mostRecent the previous and the mostRecent next node the current node
         if (head != null) {
-            node.previous = head;
-            head.next = node;
+            node.next = head;
+            head.previous = node;
         }
 
         // save the mostRecent node with the node we are inserting

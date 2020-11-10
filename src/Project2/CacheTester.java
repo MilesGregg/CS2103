@@ -80,6 +80,26 @@ public class CacheTester {
 		assertEquals(cache.getNumMisses(), 7);
 	}
 
+	@Test
+	public void testEviction2(){
+		DataProvider<Integer,String> provider = new Database();
+		Cache<Integer,String> cache = new LRUCache<Integer,String>(provider, 3);
+		// miss
+		cache.get(4);
+		// hit
+		String x = cache.get(4);
+		assertEquals(x, "4"); //checks that cache stores correct value
+		assertEquals(cache.getNumMisses(), 1);
+		// 3 misses
+		cache.get(8);
+		cache.get(10);
+		cache.get(11);
+		assertEquals(cache.getNumMisses(), 4);
+		// miss because 4 was evicted
+		cache.get(4);
+		assertEquals(cache.getNumMisses(), 5);
+	}
+
 	/**
 	 * Tests that the cache properly accesses and evicts items
 	 */
