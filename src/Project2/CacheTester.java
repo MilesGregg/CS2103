@@ -344,4 +344,23 @@ public class CacheTester {
 		assertEquals(cache.get(2), "2");
 		assertEquals(cache.getNumMisses(), 5);
 	}
+
+	@Test
+	public void testZeroCapacity(){
+		int NUM_TESTS = 25;
+		DataProvider<Double, int[]> provider = new Database2();
+		Cache<Double, int[]> cache = new LRUCache<>(provider, 0);
+		// everything is a miss with capacity 0
+		for(int i = 0; i < NUM_TESTS; i++){
+			cache.get((double) i);
+			assertEquals(cache.getNumMisses(), i+1);
+		}
+		// even when they all get the same value, the cache has 0 memory so everything is a miss
+		for(int j = 0; j < NUM_TESTS; j++){
+			cache.get(0.0);
+			assertEquals(cache.getNumMisses(), 26+j);
+		}
+		assertEquals(cache.getNumMisses(), 50);
+	}
+
 }
