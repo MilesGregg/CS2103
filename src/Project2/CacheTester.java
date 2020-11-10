@@ -80,6 +80,9 @@ public class CacheTester {
 		assertEquals(cache.getNumMisses(), 7);
 	}
 
+	/**
+	 * Tests that the cache properly accesses and evicts items
+	 */
 	@Test
 	public void leastRecentlyUsedIsCorrect () {
 		DataProvider<Double, int[]> provider = new Database2();
@@ -96,6 +99,9 @@ public class CacheTester {
 		assertEquals(cache.getNumMisses(), 4);
 	}
 
+	/**
+	 * Tests that the cache properly accesses and evicts items
+	 */
 	@Test
 	public void leastRecentlyUsedIsCorrect2 () {
 		DataProvider<Integer, String> provider = new Database();
@@ -178,6 +184,10 @@ public class CacheTester {
 		assertTrue(average <= UPPER_BOUND && average >= LOWER_BOUND);
 	}
 
+	/**
+	 * Tests that the cache properly accesses and evicts the correct items for
+	 * large numbers of elements
+	 */
 	@Test
 	public void testLRUWithLargeNumbers () {
 		Database provider = new Database();
@@ -202,6 +212,10 @@ public class CacheTester {
 		}
 	}
 
+	/**
+	 * Tests that the cache properly accesses and evicts the correct items for
+	 * large numbers of elements
+	 */
 	@Test
 	public void testLRUWithLargeNumbers2 () {
 		Database2 provider = new Database2();
@@ -224,6 +238,9 @@ public class CacheTester {
 		}
 	}
 
+	/**
+	 * Tests that the cache can properly evict the least recently used item
+	 */
 	@Test
 	public void testEviction () {
 		DataProvider<Integer, String> provider = new Database();
@@ -246,6 +263,9 @@ public class CacheTester {
 		assertEquals(cache.getNumMisses(), 6);
 	}
 
+	/**
+	 * Tests that the cache can properly access the least recently used item
+	 */
 	@Test
 	public void testGetLRU () {
 		DataProvider<Double, int[]> provider = new Database2();
@@ -259,6 +279,9 @@ public class CacheTester {
 		assertEquals(cache.getNumMisses(), 3);
 	}
 
+	/**
+	 * Tests that the cache can properly access the most recently used item
+	 */
 	@Test
 	public void testGetMRU () {
 		DataProvider<Double, int[]> provider = new Database2();
@@ -272,8 +295,11 @@ public class CacheTester {
 		assertEquals(cache.getNumMisses(), 3);
 	}
 
+	/**
+	 * Checks that the cache properly stores data
+	 */
 	@Test
-	public void testProvider () {
+	public void testCacheMemory() {
 		Database provider = new Database();
 		final Cache<Integer,String> cache = new LRUCache<>(provider, 25);
 		// miss
@@ -297,15 +323,5 @@ public class CacheTester {
 		// miss
 		assertEquals(cache.get(2), "2");
 		assertEquals(cache.getNumMisses(), 5);
-	}
-
-	@Test
-	public void testCacheAtZero() {
-		final int numOfElements = 25;
-		DataProvider<Integer, String> provider = new Database();
-		Cache<Integer, String> cache = new LRUCache<>(provider, 0);
-		for (int i = 0; i < numOfElements; i++)
-			cache.get(i);
-		assertEquals(25, cache.getNumMisses());
 	}
 }
