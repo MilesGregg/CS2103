@@ -12,7 +12,7 @@ public class CacheTester {
 	 */
 	private static class Database implements DataProvider<Integer, String> {
 		@Override
-		public String get(Integer key) {
+		public String get (Integer key) {
 			return String.valueOf(key);
 		}
 	}
@@ -22,7 +22,7 @@ public class CacheTester {
 	 */
 	private static class Database2 implements DataProvider<Double, int[]> {
 		@Override
-		public int[] get(Double key) {
+		public int[] get (Double key) {
 			return new int[] {(int) (double) key, (int) (double) key + 1};
 		}
 	}
@@ -31,7 +31,7 @@ public class CacheTester {
 	 * Tests that values retrieved from the dataprovider are actually stored in the cache
 	 */
 	@Test
-	public void testStorage(){
+	public void testStorage (){
 		DataProvider<Double, int[]> provider = new Database2();
 		Cache<Double, int[]> cache = new LRUCache<>(provider, 3);
 		cache.get(3.4);
@@ -121,13 +121,13 @@ public class CacheTester {
 	 */
 	@Test(timeout=90000)
 	public void testTimeComplexity () {
-		int TOTAL_TRIALS = 10;
-		int CAPACITY_MULTIPLIER = 1000;
-		int NUM_GET_OPERATIONS = 100000;
-		int NUM_K_VALUES = 100;
-		double LOWER_BOUND = 0.1;
-		double UPPER_BOUND = 0.9;
-		Random rand = new Random();
+		final int TOTAL_TRIALS = 10;
+		final int CAPACITY_MULTIPLIER = 1000;
+		final int NUM_GET_OPERATIONS = 100000;
+		final int NUM_K_VALUES = 100;
+		final double LOWER_BOUND = 0.1;
+		final double UPPER_BOUND = 0.9;
+		final Random rand = new Random();
 		double sum = 0;
 		// average the percentages over 10 trials
 		for (int counter = 0; counter < TOTAL_TRIALS; counter++) {
@@ -185,18 +185,18 @@ public class CacheTester {
 		Cache<Integer,String> cache = new LRUCache<>(provider, 500);
 		// Every get() operation here is a miss, so the number of misses should increase by 1 each time
 		// after this, the cache should store values from 250 to 749.
-		for(int i = 0; i < 750; i++){
+		for (int i = 0; i < 750; i++) {
 			cache.get(i);
 			assertEquals(cache.getNumMisses(), i+1);
 		}
 		// every get() operation here is a hit, so the number of misses should not change
-		for(int j = 749; j >= 250; j--){
+		for (int j = 749; j >= 250; j--) {
 			cache.get(j);
 			assertEquals(cache.getNumMisses(), 750);
 		}
 		// every get() operation here is a miss again because all of these values have been evicted
 		// so the number of misses should increase by 1 each time
-		for(int k = 249; k >= 0; k--){
+		for (int k = 249; k >= 0; k--) {
 			cache.get(k);
 			assertEquals(cache.getNumMisses(), 750 + 250 - k);
 		}
@@ -208,17 +208,17 @@ public class CacheTester {
 		// Need to instantiate an actual DataProvider
 		Cache<Double, int[]> cache = new LRUCache<>(provider, 500);
 		// Every get() operation here is a miss, so the number of misses should increase by 1 each time
-		for(double i = 0; i < 750; i++) {
+		for (double i = 0; i < 750; i++) {
 			cache.get(i);
 			assertEquals(cache.getNumMisses(), (int) i+1);
 		}
 		// every get() operation here is a hit, so the number of misses should not change
-		for(double j = 499; j >= 250; j--){
+		for (double j = 499; j >= 250; j--) {
 			cache.get(j);
 			assertEquals(cache.getNumMisses(), 750);
 		}
 		// every get() operation here is a miss again, so the number of misses should increase by 1 each time
-		for(double k = 249; k >= 0; k--){
+		for (double k = 249; k >= 0; k--) {
 			cache.get(k);
 			assertEquals(cache.getNumMisses(), 750 + 250 - (int) k);
 		}
@@ -251,7 +251,7 @@ public class CacheTester {
 		DataProvider<Double, int[]> provider = new Database2();
 		Cache<Double, int[]> cache = new LRUCache<>(provider, 3);
 		// these are all misses
-		for(double i = 3.5; i < 6.5; i++)
+		for (double i = 3.5; i < 6.5; i++)
 			cache.get(i);
 		assertEquals(cache.getNumMisses(), 3);
 		// this is a hit on the least recently used item
@@ -264,7 +264,7 @@ public class CacheTester {
 		DataProvider<Double, int[]> provider = new Database2();
 		Cache<Double, int[]> cache = new LRUCache<>(provider, 3);
 		// these are all misses
-		for(double i = 3.5; i < 6.5; i++)
+		for (double i = 3.5; i < 6.5; i++)
 			cache.get(i);
 		assertEquals(cache.getNumMisses(), 3);
 		// this is a hit on the most recently used item
@@ -299,6 +299,13 @@ public class CacheTester {
 		assertEquals(cache.getNumMisses(), 5);
 	}
 
-
-	
+	@Test
+	public void testCacheAtZero() {
+		final int numOfElements = 25;
+		DataProvider<Integer, String> provider = new Database();
+		Cache<Integer, String> cache = new LRUCache<>(provider, 0);
+		for (int i = 0; i < numOfElements; i++)
+			cache.get(i);
+		assertEquals(25, cache.getNumMisses());
+	}
 }
