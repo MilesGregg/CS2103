@@ -68,15 +68,15 @@ public class LRUCache <T, U> implements Cache <T, U> {
      * Removes a node from the linkedlist
      * @param node the node to be removed from the linkedlist
      */
-    private void removeNode(Node node){
+    private void removeNode(Node node) {
 
-        if(node.previous != null)
+        if (node.previous != null)
             // sets the previous node's "next pointer" to the next node
             node.previous.next = node.next;
         else
             // sets the head to the next node if it is the first node
             head = node.next;
-        if(node.next != null)
+        if (node.next != null)
             // sets the next node's "previous pointer" to the previous node
             node.next.previous = node.previous;
         else
@@ -136,8 +136,8 @@ public class LRUCache <T, U> implements Cache <T, U> {
         private final U value;
 
         // next and previous nodes in the linked list
-        Node next;
-        Node previous;
+        private Node next;
+        private Node previous;
 
         /**
          * setting up the node with their specified key and value values

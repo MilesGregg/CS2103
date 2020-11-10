@@ -31,9 +31,10 @@ public class CacheTester {
 	 * Tests that values retrieved from the dataprovider are actually stored in the cache
 	 */
 	@Test
-	public void testStorage (){
+	public void testStorage () {
+		final int CAPACITY = 3;
 		DataProvider<Double, int[]> provider = new Database2();
-		Cache<Double, int[]> cache = new LRUCache<>(provider, 3);
+		Cache<Double, int[]> cache = new LRUCache<>(provider, CAPACITY);
 		cache.get(3.4);
 		assertEquals(cache.getNumMisses(), 1);
 		// these are both hits, so the number of misses should not change
@@ -47,8 +48,9 @@ public class CacheTester {
 	 */
 	@Test
 	public void testGetAndEviction () {
-		Database provider = new Database();
-		Cache<Integer,String> cache = new LRUCache<>(provider, 5);
+		final int CAPACITY = 5;
+		DataProvider<Integer, String> provider = new Database();
+		Cache<Integer,String> cache = new LRUCache<>(provider, CAPACITY);
 		// miss
 		String x = cache.get(4);
 		assertEquals(x, "4");
@@ -81,9 +83,10 @@ public class CacheTester {
 	}
 
 	@Test
-	public void testEviction2(){
+	public void testEviction2() {
+		final int CAPACITY = 3;
 		DataProvider<Integer,String> provider = new Database();
-		Cache<Integer,String> cache = new LRUCache<Integer,String>(provider, 3);
+		Cache<Integer,String> cache = new LRUCache<Integer,String>(provider, CAPACITY);
 		// miss
 		cache.get(4);
 		// hit
@@ -106,7 +109,8 @@ public class CacheTester {
 	@Test
 	public void leastRecentlyUsedIsCorrect () {
 		DataProvider<Double, int[]> provider = new Database2();
-		Cache<Double, int[]> cache = new LRUCache<Double, int[]>(provider, 2);
+		final int CAPACITY = 2;
+		Cache<Double, int[]> cache = new LRUCache<Double, int[]>(provider, CAPACITY);
 		cache.get(1.2);
 		cache.get(4.5);
 		// cache is now at capacity (storing 2 items)
@@ -125,7 +129,8 @@ public class CacheTester {
 	@Test
 	public void leastRecentlyUsedIsCorrect2 () {
 		DataProvider<Integer, String> provider = new Database();
-		Cache<Integer, String> cache = new LRUCache<>(provider, 2);
+		final int CAPACITY = 2;
+		Cache<Integer, String> cache = new LRUCache<>(provider, CAPACITY);
 		cache.get(1);
 		cache.get(4);
 		// cache is now at capacity (storing 2 items)
@@ -147,12 +152,12 @@ public class CacheTester {
 	 * cache of size 1000*k
 	 * @return an array of the times
 	 */
-	private long[] getTimes(){
+	private long[] getTimes() {
 		final Random rand = new Random();
 		final int CAPACITY_MULTIPLIER = 1000;
 		final int NUM_GET_OPERATIONS = 100000;
 		final int NUM_K_VALUES = 100;
-		Database provider = new Database();
+		DataProvider<Integer, String> provider = new Database();
 		long[] times = new long[NUM_K_VALUES];
 		for (int k = 1; k <= NUM_K_VALUES; k++) {
 			int capacity = CAPACITY_MULTIPLIER * k;
@@ -218,23 +223,26 @@ public class CacheTester {
 	 */
 	@Test
 	public void testLRUWithLargeNumbers () {
-		Database provider = new Database();
+		final int TOTAL = 750;
+		final int LAST_HIT = 250;
+		final int CAPACITY = 500;
+		DataProvider<Integer, String> provider = new Database();
 		// Need to instantiate an actual DataProvider
-		Cache<Integer,String> cache = new LRUCache<>(provider, 500);
+		Cache<Integer,String> cache = new LRUCache<>(provider, CAPACITY);
 		// Every get() operation here is a miss, so the number of misses should increase by 1 each time
 		// after this, the cache should store values from 250 to 749.
-		for (int i = 0; i < 750; i++) {
+		for (int i = 0; i < TOTAL; i++) {
 			cache.get(i);
 			assertEquals(cache.getNumMisses(), i+1);
 		}
 		// every get() operation here is a hit, so the number of misses should not change
-		for (int j = 749; j >= 250; j--) {
+		for (int j = TOTAL - 1; j >= LAST_HIT; j--) {
 			cache.get(j);
 			assertEquals(cache.getNumMisses(), 750);
 		}
 		// every get() operation here is a miss again because all of these values have been evicted
 		// so the number of misses should increase by 1 each time
-		for (int k = 249; k >= 0; k--) {
+		for (int k = LAST_HIT - 1; k >= 0; k--) {
 			cache.get(k);
 			assertEquals(cache.getNumMisses(), 750 + 250 - k);
 		}
@@ -246,21 +254,24 @@ public class CacheTester {
 	 */
 	@Test
 	public void testLRUWithLargeNumbers2 () {
-		Database2 provider = new Database2();
+		final int TOTAL = 750;
+		final int LAST_HIT = 250;
+		final int CAPACITY = 500;
+		DataProvider<Double, int[]> provider = new Database2();
 		// Need to instantiate an actual DataProvider
-		Cache<Double, int[]> cache = new LRUCache<>(provider, 500);
+		Cache<Double, int[]> cache = new LRUCache<>(provider, CAPACITY);
 		// Every get() operation here is a miss, so the number of misses should increase by 1 each time
-		for (double i = 0; i < 750; i++) {
+		for (double i = 0; i < TOTAL; i++) {
 			cache.get(i);
 			assertEquals(cache.getNumMisses(), (int) i+1);
 		}
 		// every get() operation here is a hit, so the number of misses should not change
-		for (double j = 499; j >= 250; j--) {
+		for (double j = TOTAL - 1; j >= LAST_HIT; j--) {
 			cache.get(j);
 			assertEquals(cache.getNumMisses(), 750);
 		}
 		// every get() operation here is a miss again, so the number of misses should increase by 1 each time
-		for (double k = 249; k >= 0; k--) {
+		for (double k = LAST_HIT - 1; k >= 0; k--) {
 			cache.get(k);
 			assertEquals(cache.getNumMisses(), 750 + 250 - (int) k);
 		}
@@ -272,9 +283,10 @@ public class CacheTester {
 	@Test
 	public void testEviction () {
 		DataProvider<Integer, String> provider = new Database();
-		Cache<Integer, String> cache = new LRUCache<>(provider, 4);
+		final int CAPACITY = 4;
+		Cache<Integer, String> cache = new LRUCache<>(provider, CAPACITY);
 		// every get() operation here is a miss and should increase the number of misses by 1
-		for(int i = 0; i < 4; i++)
+		for (int i = 0; i < CAPACITY; i++)
 			cache.get(i);
 		assertEquals(cache.getNumMisses(), 4);
 		cache.get(0);
@@ -296,8 +308,9 @@ public class CacheTester {
 	 */
 	@Test
 	public void testGetLRU () {
+		final int CAPACITY = 3;
 		DataProvider<Double, int[]> provider = new Database2();
-		Cache<Double, int[]> cache = new LRUCache<>(provider, 3);
+		Cache<Double, int[]> cache = new LRUCache<>(provider, CAPACITY);
 		// these are all misses
 		for (double i = 3.5; i < 6.5; i++)
 			cache.get(i);
@@ -312,8 +325,9 @@ public class CacheTester {
 	 */
 	@Test
 	public void testGetMRU () {
+		final int CAPACITY = 3;
 		DataProvider<Double, int[]> provider = new Database2();
-		Cache<Double, int[]> cache = new LRUCache<>(provider, 3);
+		Cache<Double, int[]> cache = new LRUCache<>(provider, CAPACITY);
 		// these are all misses
 		for (double i = 3.5; i < 6.5; i++)
 			cache.get(i);
@@ -328,8 +342,9 @@ public class CacheTester {
 	 */
 	@Test
 	public void testCacheMemory() {
-		Database provider = new Database();
-		final Cache<Integer,String> cache = new LRUCache<>(provider, 25);
+		final int CAPACITY = 25;
+		DataProvider<Integer, String> provider = new Database();
+		final Cache<Integer,String> cache = new LRUCache<>(provider, CAPACITY);
 		// miss
 		assertEquals(cache.get(5), "5");
 		assertEquals(cache.getNumMisses(), 1);
@@ -354,17 +369,17 @@ public class CacheTester {
 	}
 
 	@Test
-	public void testZeroCapacity(){
+	public void testZeroCapacity() {
 		int NUM_TESTS = 25;
 		DataProvider<Double, int[]> provider = new Database2();
 		Cache<Double, int[]> cache = new LRUCache<>(provider, 0);
 		// everything is a miss with capacity 0
-		for(int i = 0; i < NUM_TESTS; i++){
+		for (int i = 0; i < NUM_TESTS; i++) {
 			cache.get((double) i);
 			assertEquals(cache.getNumMisses(), i+1);
 		}
 		// even when they all get the same value, the cache has 0 memory so everything is a miss
-		for(int j = 0; j < NUM_TESTS; j++){
+		for (int j = 0; j < NUM_TESTS; j++) {
 			cache.get(0.0);
 			assertEquals(cache.getNumMisses(), 26+j);
 		}
