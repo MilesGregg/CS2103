@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="76cea07b-b721-49fe-a8d6-b431f4495a2d" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Random2.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/WhitehillTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CacheTester.java" beforeDir="false" afterPath="$PROJECT_DIR$/CacheTester.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Project2/CacheTester.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Project2/CacheTester.class" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="ProjectId" id="1k4rXQhXuyr2FJLtSQMvSJ2CWF5" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="project.structure.last.edited" value="Libraries" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.2" />
+  </component>
+  <component name="RunManager" selected="JUnit.CacheTester">
+    <configuration name="CacheTester" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Project2" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="CacheTester" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CacheTester.testCacheAtZero" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Project2" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="CacheTester" />
+      <option name="METHOD_NAME" value="testCacheAtZero" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CacheTester.testProviderIncorrectlyImplementation" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Project2" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="CacheTester" />
+      <option name="METHOD_NAME" value="testProviderIncorrectlyImplementation" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Random2" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Project2" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="Random2" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="WhitehillTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Project2" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="WhitehillTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.CacheTester" />
+        <item itemvalue="JUnit.Random2" />
+        <item itemvalue="JUnit.WhitehillTest" />
+        <item itemvalue="JUnit.CacheTester.testCacheAtZero" />
+        <item itemvalue="JUnit.CacheTester.testProviderIncorrectlyImplementation" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="76cea07b-b721-49fe-a8d6-b431f4495a2d" name="Default Changelist" comment="" />
+      <created>1604970743225</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1604970743225</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state width="1878" height="284" key="GridCell.Tab.0.bottom" timestamp="1604977746070">
+      <screen x="-1920" y="23" width="1920" height="1057" />
+    </state>
+    <state width="1878" height="284" key="GridCell.Tab.0.bottom/-1920.23.1920.1057/0.23.1440.816@-1920.23.1920.1057" timestamp="1604977746070" />
+    <state width="1878" height="284" key="GridCell.Tab.0.bottom/-1920.23.1920.1057/0.23.1440.821@-1920.23.1920.1057" timestamp="1604973643859" />
+    <state width="1878" height="284" key="GridCell.Tab.0.center" timestamp="1604977746069">
+      <screen x="-1920" y="23" width="1920" height="1057" />
+    </state>
+    <state width="1878" height="284" key="GridCell.Tab.0.center/-1920.23.1920.1057/0.23.1440.816@-1920.23.1920.1057" timestamp="1604977746069" />
+    <state width="1878" height="284" key="GridCell.Tab.0.center/-1920.23.1920.1057/0.23.1440.821@-1920.23.1920.1057" timestamp="1604973643859" />
+    <state width="1878" height="284" key="GridCell.Tab.0.left" timestamp="1604977746069">
+      <screen x="-1920" y="23" width="1920" height="1057" />
+    </state>
+    <state width="1878" height="284" key="GridCell.Tab.0.left/-1920.23.1920.1057/0.23.1440.816@-1920.23.1920.1057" timestamp="1604977746069" />
+    <state width="1878" height="284" key="GridCell.Tab.0.left/-1920.23.1920.1057/0.23.1440.821@-1920.23.1920.1057" timestamp="1604973643857" />
+    <state width="1878" height="284" key="GridCell.Tab.0.right" timestamp="1604977746070">
+      <screen x="-1920" y="23" width="1920" height="1057" />
+    </state>
+    <state width="1878" height="284" key="GridCell.Tab.0.right/-1920.23.1920.1057/0.23.1440.816@-1920.23.1920.1057" timestamp="1604977746070" />
+    <state width="1878" height="284" key="GridCell.Tab.0.right/-1920.23.1920.1057/0.23.1440.821@-1920.23.1920.1057" timestamp="1604973643859" />
+    <state x="-1472" y="133" key="SettingsEditor" timestamp="1604970882519">
+      <screen x="-1920" y="23" width="1920" height="1057" />
+    </state>
+    <state x="-1472" y="133" key="SettingsEditor/-1920.23.1920.1057/0.23.1440.816@-1920.23.1920.1057" timestamp="1604970882519" />
+  </component>
+</project>
