@@ -1,32 +1,41 @@
-package Project3;
-
 import java.io.*;
 import java.util.*;
 import java.util.stream.*;
 import java.util.function.*;
 
 public class IMDBGraphImpl implements IMDBGraph {
+	private final static List<Actor> actors = new ArrayList<>();
+	private final static Map<String, Movie> movies = new HashMap<>();
 	// Implement me
 	public IMDBGraphImpl (String actorsFilename, String actressesFilename) throws IOException {
+		processActors(actorsFilename);
+		processActors(actressesFilename);
 	}
 
 	// Implement me
+	@Override
 	public Collection<? extends Node> getActors () {
-		return null;
+		return actors;
 	}
 
 	// Implement me
+	@Override
 	public Collection<? extends Node> getMovies () {
-		return null;
+		return movies.values();
 	}
 
 	// Implement me
+	@Override
 	public Node getMovie (String name) {
-		return null;
+		return movies.get(name);
 	}
 
+
 	// Implement me
+	@Override
 	public Node getActor (String name) {
+		for(Node node : actors)
+			if(node.getName().equals(name)) return node;
 		return null;
 	}
 
@@ -51,29 +60,50 @@ public class IMDBGraphImpl implements IMDBGraph {
 		// Skip until:  Name...Titles
 		while (s.hasNextLine()) {
 			String line = s.nextLine();
-			if (line.startsWith("Name") && line.indexOf("Titles") >= 0) {
+			if (line.startsWith("Name") && line.contains("Titles")) {
 				break;
 			}
 		}
 		s.nextLine();  // read one more
 
-		String actorName = null;
+		String actorName = "";
+		Actor actorNode = new Actor();
+
 		while (s.hasNextLine()) {
 			final String line = s.nextLine();
 
+			actorNode.setName(actorName);
+
 			//System.out.println(line);
-			if (line.indexOf("\t") >= 0) {  // new movie, either for an existing or a new actor
+			if (line.contains("\t")) {  // new movie, either for an existing or a new actor
+
 				int idxOfTab = line.indexOf("\t");
 				if (idxOfTab > 0) {  // not at beginning of line => new actor
 					actorName = line.substring(0, idxOfTab);
 
 					// We have found a new actor...
 					//System.out.println(actorName);
+					actorNode = new Actor();
+					actorNode.setName(actorName);
+					actors.add(actorNode);
+					//System.out.println(actorName);
 				}
-				if (line.indexOf("(TV)") < 0 && line.indexOf("\"") < 0) {  // Only include bona-fide movies
+				if (!line.contains("(TV)") && !line.contains("\"")) {  // Only include bona-fide movies
 					int lastIdxOfTab = line.lastIndexOf("\t");
 					final String movieName = parseMovieName(line.substring(lastIdxOfTab + 1));
-
+					Movie movie = movies.get(movieName);
+					if(movie != null){
+						movie.addNeighbor(actorNode);
+						actorNode.addNeighbor(movie);
+						//System.out.println(actorNode.getName());
+					}
+					else{
+						movie = new Movie();
+						movie.name = movieName;
+						movie.addNeighbor(actorNode);
+						actorNode.addNeighbor(movie);
+						movies.put(movieName, movie);
+					}
 					// We have found a new movie
 					//System.out.println(movieName);
 				}

@@ -1,5 +1,3 @@
-package Project3;
-
 import java.util.*;
 /**
  * Interface for a node in a graph; each Node must have a name

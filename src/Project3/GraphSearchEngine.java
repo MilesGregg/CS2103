@@ -1,5 +1,3 @@
-package Project3;
-
 import java.util.List;
 /**
  * An interface for a graph search engine that can perform breadth-first search (BFS)

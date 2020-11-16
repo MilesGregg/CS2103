@@ -1,6 +1,5 @@
-package Project3;
-
-import java.util.stream.*;
+import
+java.util.stream.*;
 import java.util.function.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -13,7 +12,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import java.util.*;
-
 /**
  * A simple GUI to illustrate breadth-first search on movie/actor nodes in Project 3.
  */
