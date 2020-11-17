@@ -13,12 +13,12 @@ public class GraphSearchEngineImpl implements GraphSearchEngine {
         while (nodesToVisit.size() > 0) {
             Node node = nodesToVisit.poll();
             visitedNodes.add(node);
+            path = new ArrayList<>();
             if (node.equals(t)) {
-                path = new ArrayList<>();
                 for (int i = 0; i < distance.get(node); i++) {
                     path.add(node);
                     for (Node neighbor : node.getNeighbors()) {
-                        if (visitedNodes.contains(neighbor) && distance.get(neighbor) == distance.get(node)-1) {
+                        if (visitedNodes.contains(neighbor) && distance.get(neighbor).equals(distance.get(node))) {
                             node = neighbor;
                             break;
                         }
@@ -30,7 +30,7 @@ public class GraphSearchEngineImpl implements GraphSearchEngine {
                 for (Node k : node.getNeighbors()) {
                     if (!visitedNodes.contains(k)) {
                         nodesToVisit.add(k);
-                        distance.put(k, distance.get(node) + 1);
+                        distance.put(k, distance.get(node));
                     }
                 }
             }
