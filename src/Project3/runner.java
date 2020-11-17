@@ -1,7 +1,7 @@
 import java.io.IOException;
 
 public class runner {
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException {
         long start = System.currentTimeMillis();
         IMDBGraphImpl i = new IMDBGraphImpl("G:\\Darshan\\Downloads\\IMDB\\actors.list","G:\\Darshan\\Downloads\\IMDB\\actresses.list");
         long end = System.currentTimeMillis();
