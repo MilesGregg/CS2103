@@ -17,7 +17,7 @@ public class GraphSearchEngineImpl implements GraphSearchEngine {
                 }
             }
         }
-
+        if (!nodes.containsKey(t)) return null;
         final List<Node> nodePath = new ArrayList<>();
         nodePath.add(t);
         while (!nodePath.get(nodePath.size()-1).equals(s)) {
@@ -25,7 +25,6 @@ public class GraphSearchEngineImpl implements GraphSearchEngine {
         }
 
         Collections.reverse(nodePath);
-
         return nodePath;
     }
 }
