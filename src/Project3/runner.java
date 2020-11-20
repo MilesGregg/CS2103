@@ -40,7 +40,10 @@ public class runner {
         System.out.println("DISTANCE");
         List<Node> path = new GraphSearchEngineImpl().findShortestPath(kev, merr);
         System.out.println(path.size());
-        for(Node q : path)
-            System.out.println(q.getNeighbors());
+        for (Node n : path) {
+            System.out.println(n.getName());
+        }
+        //for(Node q : path)
+        //    System.out.println(q.getNeighbors());
     }
 }

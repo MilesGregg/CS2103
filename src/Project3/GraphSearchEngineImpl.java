@@ -18,6 +18,14 @@ public class GraphSearchEngineImpl implements GraphSearchEngine {
             }
         }
 
-        return null;
+        final List<Node> nodePath = new ArrayList<>();
+        nodePath.add(t);
+        while (!nodePath.get(nodePath.size()-1).equals(s)) {
+            nodePath.add(nodes.get(nodePath.get(nodePath.size()-1)));
+        }
+
+        Collections.reverse(nodePath);
+
+        return nodePath;
     }
 }
