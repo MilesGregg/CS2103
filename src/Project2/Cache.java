@@ -1,5 +1,3 @@
-package Project2;
-
 /**
  * CS 2103 2019 B-term (Whitehill)
  * A cache that associates keys with values.
