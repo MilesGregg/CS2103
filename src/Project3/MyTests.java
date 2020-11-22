@@ -58,17 +58,7 @@ public class MyTests {
         if(success5) System.out.println("TEST 5 PASSED");
         Object[] a = imdbGraph.getActors2().toArray();
 
-        List<String> bad = new ArrayList<>();
-        Scanner sc = new Scanner(new FileReader("G:\\Darshan\\Downloads\\junk.txt"));
-        while(sc.hasNextLine()){
-            String name = sc.nextLine();
-            Node actor = imdbGraph.getActor(name);
-            if(actor == null) {
-                System.out.println(name);
-                bad.add(name);
-            }
-        }
-        System.out.println(bad.size());
+
 
     }
     @Test
