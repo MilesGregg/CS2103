@@ -21,6 +21,28 @@ public class GraphPartialTester {
 		final Node actress2 = imdbGraph.getActor("Actress2");
 		final List<Node> shortestPath = searchEngine.findShortestPath(actor1, actress2);
 		assertNull(shortestPath);  // there is no path between these people
+		final Node actress1 = imdbGraph.getActor("Actress1");
+		final Node movie1 = imdbGraph.getMovie("Movie1 (2001)");
+		List<Node> path1 = new ArrayList<Node>();
+		path1.add(actor1);
+		path1.add(movie1);
+		path1.add(actress1);
+		assertEquals(path1, searchEngine.findShortestPath(actor1, actress1));
+	}
+
+	@Test
+	public void findShortestPath2() throws IOException {
+		imdbGraph = new IMDBGraphImpl("files/actors.list","files/actresses.list");
+		final Node kev = imdbGraph.getActor("Bacon, Kevin (I)");
+		final Node merr = imdbGraph.getActor("Merriam, Lucy");
+		List<Node> path = new GraphSearchEngineImpl().findShortestPath(kev, merr);
+		List<Node> expectedGraph = new ArrayList<>();
+		expectedGraph.add(imdbGraph.getActor("Bacon, Kevin (I)"));
+		expectedGraph.add(imdbGraph.getMovie("My One and Only (2009)"));
+		expectedGraph.add(imdbGraph.getActor("Kneeream, David"));
+		expectedGraph.add(imdbGraph.getMovie("Marley & Me (2008)"));
+		expectedGraph.add(imdbGraph.getActor("Merriam, Lucy"));
+		assertArrayEquals(expectedGraph.toArray(), path.toArray());
 	}
 
 	@Before
