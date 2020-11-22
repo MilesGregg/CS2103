@@ -4,18 +4,24 @@ import java.util.stream.*;
 import java.util.function.*;
 
 public class IMDBGraphImpl implements IMDBGraph {
-	private final static List<Actor> actors = new ArrayList<>();
+	private static Map<String, Actor> actors = new HashMap<>();
 	private final static Map<String, Movie> movies = new HashMap<>();
+	List<Actor> actorList = new ArrayList<>();
 	// Implement me
 	public IMDBGraphImpl (String actorsFilename, String actressesFilename) throws IOException {
 		processActors(actorsFilename);
 		processActors(actressesFilename);
+		fix();
 	}
 
 	// Implement me
 	@Override
 	public Collection<? extends Node> getActors () {
-		return actors;
+		return actorList;
+	}
+
+	public Collection<? extends Node> getActors2(){
+		return actors.values();
 	}
 
 	// Implement me
@@ -34,9 +40,7 @@ public class IMDBGraphImpl implements IMDBGraph {
 	// Implement me
 	@Override
 	public Node getActor (String name) {
-		for(Node node : actors)
-			if(node.getName().equals(name)) return node;
-		return null;
+		return actors.get(name);
 	}
 
 	/**
@@ -83,9 +87,14 @@ public class IMDBGraphImpl implements IMDBGraph {
 
 					// We have found a new actor...
 					//System.out.println(actorName);
-					actorNode = new Actor();
-					actorNode.setName(actorName);
-					actors.add(actorNode);
+					if(!actors.containsKey(actorName)) {
+						actorNode = new Actor();
+						actorNode.setName(actorName);
+						actors.put(actorName, actorNode);
+					}
+					else{
+						actorNode = actors.get(actorName);
+					}
 					//System.out.println(actorName);
 				}
 				if (!line.contains("(TV)") && !line.contains("\"")) {  // Only include bona-fide movies
@@ -109,5 +118,15 @@ public class IMDBGraphImpl implements IMDBGraph {
 				}
 			}
 		}
+	}
+
+	void fix(){
+		Map<String, Actor> newActors = new HashMap<>();
+		for(String a : actors.keySet())
+			if(!actors.get(a).getNeighbors().isEmpty()) {
+				newActors.put(a, actors.get(a));
+				actorList.add(actors.get(a));
+			}
+		actors = newActors;
 	}
 }
