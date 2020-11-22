@@ -78,7 +78,7 @@ public class Test2 {
      */
     public void failedSetup() throws IOException{
         try {
-            imdbGraph = new IMDBGraphImpl("G:\\Darshan\\Downloads\\CS2103\\src\\Project3\\actors_test.list","G:\\Darshan\\Downloads\\CS2103\\src\\Project3\\actresses_test.list");
+            imdbGraph = new IMDBGraphImpl("G:\\Darshan\\Downloads\\IMDB (1)\\actors.list","G:\\Darshan\\Downloads\\IMDB (1)\\actresses.list");
         } catch (Exception e){
             assertTrue(true);
         }

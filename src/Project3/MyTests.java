@@ -7,7 +7,7 @@ import java.io.*;
 public class MyTests {
 
     public static void main(String[] args) throws IOException {
-        IMDBGraphImpl imdbGraph = new IMDBGraphImpl("G:\\Darshan\\Downloads\\IMDB (1)\\actors.list","G:\\Darshan\\Downloads\\IMDB (1)\\actresses.list");
+        IMDBGraphImpl imdbGraph = new IMDBGraphImpl("G:\\Darshan\\Downloads\\IMDB\\actors.list","G:\\Darshan\\Downloads\\IMDB\\actresses.list");
         boolean success1 = true;
         for(Node a : imdbGraph.getActors()){
             if(a.getNeighbors().size() == 0){
@@ -56,7 +56,9 @@ public class MyTests {
             }
         }
         if(success5) System.out.println("TEST 5 PASSED");
-        Object[] a = imdbGraph.getActors2().toArray();
+
+        System.out.println(imdbGraph.getMovies().size());
+        System.out.println(imdbGraph.getActors().size());
 
 
 

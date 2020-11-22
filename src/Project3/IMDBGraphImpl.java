@@ -6,7 +6,6 @@ import java.util.function.*;
 public class IMDBGraphImpl implements IMDBGraph {
 	private static Map<String, Actor> actors = new HashMap<>();
 	private final static Map<String, Movie> movies = new HashMap<>();
-	List<Actor> actorList = new ArrayList<>();
 	// Implement me
 	public IMDBGraphImpl (String actorsFilename, String actressesFilename) throws IOException {
 		processActors(actorsFilename);
@@ -17,10 +16,6 @@ public class IMDBGraphImpl implements IMDBGraph {
 	// Implement me
 	@Override
 	public Collection<? extends Node> getActors () {
-		return actorList;
-	}
-
-	public Collection<? extends Node> getActors2(){
 		return actors.values();
 	}
 
@@ -102,15 +97,19 @@ public class IMDBGraphImpl implements IMDBGraph {
 					final String movieName = parseMovieName(line.substring(lastIdxOfTab + 1));
 					Movie movie = movies.get(movieName);
 					if(movie != null){
-						movie.addNeighbor(actorNode);
-						actorNode.addNeighbor(movie);
+						if(!movie.getNeighbors().contains(actorNode))
+							movie.addNeighbor(actorNode);
+						if(!actorNode.getNeighbors().contains(movie))
+							actorNode.addNeighbor(movie);
 						//System.out.println(actorNode.getName());
 					}
 					else{
 						movie = new Movie();
 						movie.name = movieName;
-						movie.addNeighbor(actorNode);
-						actorNode.addNeighbor(movie);
+						if(!movie.getNeighbors().contains(actorNode))
+							movie.addNeighbor(actorNode);
+						if(!actorNode.getNeighbors().contains(movie))
+							actorNode.addNeighbor(movie);
 						movies.put(movieName, movie);
 					}
 					// We have found a new movie
@@ -125,7 +124,6 @@ public class IMDBGraphImpl implements IMDBGraph {
 		for(String a : actors.keySet())
 			if(!actors.get(a).getNeighbors().isEmpty()) {
 				newActors.put(a, actors.get(a));
-				actorList.add(actors.get(a));
 			}
 		actors = newActors;
 	}
