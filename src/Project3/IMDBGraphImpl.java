@@ -1,7 +1,6 @@
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
-import java.util.stream.*;
-import java.util.function.*;
 
 public class IMDBGraphImpl implements IMDBGraph {
 	private static Map<String, Actor> actors = new HashMap<>();
@@ -156,4 +155,51 @@ public class IMDBGraphImpl implements IMDBGraph {
 		// sets the actors map equal to the new map that was just created
 		actors = newActors;
 	}
+
+	private static class Actor implements Node {
+		List<Node> movies = new ArrayList<>();
+		String name;
+
+		public void setName(String name){
+			this.name = name;
+		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
+		@Override
+		public Collection<? extends Node> getNeighbors() {
+			return movies;
+		}
+
+		public void addNeighbor(Node movie){
+			movies.add(movie);
+		}
+	}
+
+	private static class Movie implements Node {
+		List<Actor> actors = new ArrayList<>();
+		String name;
+
+		public void setName(String name){
+			this.name = name;
+		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
+		@Override
+		public Collection<? extends Node> getNeighbors() {
+			return actors;
+		}
+
+		public void addNeighbor(Actor actor){
+			actors.add(actor);
+		}
+	}
+
 }

@@ -7,7 +7,7 @@ import java.io.*;
 public class MyTests {
 
     public static void main(String[] args) throws IOException {
-        IMDBGraphImpl imdbGraph = new IMDBGraphImpl("G:\\Darshan\\Downloads\\IMDB\\actors.list","G:\\Darshan\\Downloads\\IMDB\\actresses.list");
+        IMDBGraph imdbGraph = new IMDBGraphImpl("G:\\Darshan\\Downloads\\IMDB\\actors.list","G:\\Darshan\\Downloads\\IMDB\\actresses.list");
         boolean success1 = true;
         for(Node a : imdbGraph.getActors()){
             if(a.getNeighbors().size() == 0){

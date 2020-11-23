@@ -1,5 +1,6 @@
 import static org.junit.Assert.*;
-import org.junit.Before;
+
+import org.junit.BeforeClass;
 import org.junit.Test;
 import java.util.*;
 import java.io.*;
@@ -8,14 +9,12 @@ import java.io.*;
  * Code to test Project 3; you should definitely add more tests!
  */
 public class GraphPartialTester {
-	IMDBGraph imdbGraph;
-	IMDBGraph testGraph;
-	GraphSearchEngine searchEngine;
+	private static IMDBGraph imdbGraph;
+	private static IMDBGraph testGraph;
+	private static GraphSearchEngine searchEngine;
 
 	public GraphPartialTester() throws IOException {
-		imdbGraph = new IMDBGraphImpl("G:\\Darshan\\Downloads\\IMDB\\actors.list","G:\\Darshan\\Downloads\\IMDB\\actresses.list");
-		testGraph = new IMDBGraphImpl("G:\\Darshan\\Downloads\\CS2103\\src\\Project3\\actors_test.list", "G:\\Darshan\\Downloads\\CS2103\\src\\Project3\\actresses_test.list");
-		searchEngine = new GraphSearchEngineImpl();
+
 	}
 
 	/**
@@ -60,12 +59,14 @@ public class GraphPartialTester {
 		assertArrayEquals(expectedGraph.toArray(), path.toArray());
 	}
 
-	@Before
+	@BeforeClass
 	/**
 	 * Instantiates the graph
 	 */
-	public void setUp () throws IOException {
-
+	public static void setUp() throws IOException {
+		imdbGraph = new IMDBGraphImpl("G:\\Darshan\\Downloads\\IMDB\\actors.list","G:\\Darshan\\Downloads\\IMDB\\actresses.list");
+		testGraph = new IMDBGraphImpl("G:\\Darshan\\Downloads\\CS2103\\src\\Project3\\actors_test.list", "G:\\Darshan\\Downloads\\CS2103\\src\\Project3\\actresses_test.list");
+		searchEngine = new GraphSearchEngineImpl();
 	}
 
 	@Test
