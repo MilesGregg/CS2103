@@ -8,10 +8,12 @@ public class IMDBGraphImpl implements IMDBGraph {
 
 
 	/**
-	 * Stores the actors and actresses along with their movies into a graph data structure, and removes
-	 * any actors or actresses who have 0 movies associated with them.
-	 * @param actorsFilename the path to the file containing a list of actors (male) and their movies
-	 * @param actressesFilename the path to the file containing a list of actresses (female) and their movies
+	 * Stores the actors and actresses along with their movies into a graph data structure,
+	 * and removes any actors or actresses who have 0 movies associated with them.
+	 * @param actorsFilename the path to the file containing a list of actors (male) and their
+	 * movies
+	 * @param actressesFilename the path to the file containing a list of actresses (female)
+	 * and their movies
 	 */
 	public IMDBGraphImpl (String actorsFilename, String actressesFilename) throws IOException {
 		processActors(actorsFilename);
@@ -85,6 +87,15 @@ public class IMDBGraphImpl implements IMDBGraph {
 		}
 		s.nextLine();  // read one more
 
+		parse(s); // parse the rest of the file to create the graph
+	}
+
+	/**
+	 * Parses the part of the file containing all of the actors and movies, and adds this data
+	 * to the graph
+	 * @param s the scanner which is used to read the file
+	 */
+	private static void parse(Scanner s) {
 		// Initializes an actor object
 		String actorName = "";
 		Actor actorNode = new Actor();
@@ -115,36 +126,46 @@ public class IMDBGraphImpl implements IMDBGraph {
 				if (!line.contains("(TV)") && !line.contains("\"")) {  // Only include bona-fide movies
 					int lastIdxOfTab = line.lastIndexOf("\t");
 					final String movieName = parseMovieName(line.substring(lastIdxOfTab + 1));
-					// Get the existing movie with this name (or null if it does not exist)
-					Movie movie = movies.get(movieName);
-					// If the movie already exists, add the actor to the neighbors if it is not already there, and
-					// add the movie as a neighbor for the actor, if it does not already exist
-					if(movie != null){
-						if(!movie.getNeighbors().contains(actorNode))
-							movie.addNeighbor(actorNode);
-						if(!actorNode.getNeighbors().contains(movie))
-							actorNode.addNeighbor(movie);
-					}
-					// If the movie does not yet exist, make a new movie, add the actor as a neighbor, and make the
-					// movie one of the actor's neighbors
-					else{
-						movie = new Movie();
-						movie.name = movieName;
-						if(!movie.getNeighbors().contains(actorNode))
-							movie.addNeighbor(actorNode);
-						if(!actorNode.getNeighbors().contains(movie))
-							actorNode.addNeighbor(movie);
-						movies.put(movieName, movie);
-					}
+					addMovie(actorNode, movieName);
 				}
 			}
 		}
 	}
 
 	/**
+	 * Either adds a new movie to the graph if the movie does not yet exist, or adds the given actor
+	 * to the existing movie's list of actors
+	 * @param actorNode the actor that the movie is listed under
+	 * @param movieName the name of the movie
+	 */
+	private static void addMovie(Actor actorNode, String movieName){
+		// Get the existing movie with this name (or null if it does not exist)
+		Movie movie = movies.get(movieName);
+		// If the movie already exists, add the actor to the neighbors if it is not already there, and
+		// add the movie as a neighbor for the actor, if it does not already exist
+		if(movie != null) {
+			if(!movie.getNeighbors().contains(actorNode))
+				movie.addActor(actorNode);
+			if(!actorNode.getNeighbors().contains(movie))
+				actorNode.addMovie(movie);
+		}
+		// If the movie does not yet exist, make a new movie, add the actor as a neighbor, and make the
+		// movie one of the actor's neighbors
+		else{
+			movie = new Movie();
+			movie.name = movieName;
+			if(!movie.getNeighbors().contains(actorNode))
+				movie.addActor(actorNode);
+			if(!actorNode.getNeighbors().contains(movie))
+				actorNode.addMovie(movie);
+			movies.put(movieName, movie);
+		}
+	}
+
+	/**
 	 * Removes all actors with 0 movies from the list of actors
 	 */
-	void removeEmptyActors(){
+	private void removeEmptyActors(){
 		// Initializes a new map of actors
 		Map<String, Actor> newActors = new HashMap<>();
 		// iterates through the existing actors, and only adds ones with at least 1 movie to the new map
@@ -157,47 +178,81 @@ public class IMDBGraphImpl implements IMDBGraph {
 	}
 
 	private static class Actor implements Node {
+		// Actors store a list of movies that they acted in, along with a name
 		List<Node> movies = new ArrayList<>();
 		String name;
 
+		/**
+		 * Sets the actor's name
+		 * @param name the name that the actor should have
+		 */
 		public void setName(String name){
 			this.name = name;
 		}
 
+		/**
+		 * Returns the actor's name
+		 * @return the actor's name
+		 */
 		@Override
 		public String getName() {
 			return name;
 		}
 
+		/**
+		 * Returns a collection of movies that the actor was in
+		 * @return a collection of movies
+		 */
 		@Override
 		public Collection<? extends Node> getNeighbors() {
 			return movies;
 		}
 
-		public void addNeighbor(Node movie){
+		/**
+		 * Adds a movie to the actor's list of movies
+		 * @param movie the movie to add
+		 */
+		public void addMovie(Movie movie){
 			movies.add(movie);
 		}
 	}
 
 	private static class Movie implements Node {
+		// Movies store a list of actors that were in the movie, along with a movie name
 		List<Actor> actors = new ArrayList<>();
 		String name;
 
+		/**
+		 * Sets the movie's name
+		 * @param name the new name for the movie
+		 */
 		public void setName(String name){
 			this.name = name;
 		}
 
+		/**
+		 * Returns the movie's name
+		 * @return the movie's name
+		 */
 		@Override
 		public String getName() {
 			return name;
 		}
 
+		/**
+		 * Returns a collection of the actors that were in the movie
+		 * @return a collection of the actors that were in the movie
+		 */
 		@Override
 		public Collection<? extends Node> getNeighbors() {
 			return actors;
 		}
 
-		public void addNeighbor(Actor actor){
+		/**
+		 * Adds an actor to the movie's list of actors
+		 * @param actor the actor to add
+		 */
+		public void addActor(Actor actor){
 			actors.add(actor);
 		}
 	}

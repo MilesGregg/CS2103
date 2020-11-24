@@ -7,7 +7,10 @@ import java.io.*;
 public class MyTests {
 
     public static void main(String[] args) throws IOException {
+        long start = System.currentTimeMillis();
         IMDBGraph imdbGraph = new IMDBGraphImpl("G:\\Darshan\\Downloads\\IMDB\\actors.list","G:\\Darshan\\Downloads\\IMDB\\actresses.list");
+        long end = System.currentTimeMillis();
+        System.out.println("TIME: "+(end-start));
         boolean success1 = true;
         for(Node a : imdbGraph.getActors()){
             if(a.getNeighbors().size() == 0){
