@@ -27,7 +27,7 @@ public class SimpleExpressionParser implements ExpressionParser {
 	protected Expression parseStartExpression (String str) throws ExpressionParseException {
 		Expression expression = null;
 		// TODO implement this method, helper methods, classes that implement Expression, etc.
-		 expression = parseAdditiveExpression(str);
+		 expression = parseA(str);
 		 if (expression == null) {
 		 	expression = parseParentheticalExpression(str);
 		 }
@@ -47,7 +47,7 @@ public class SimpleExpressionParser implements ExpressionParser {
 			expression = parseHelper(str, '-', this::parseA, this::parseM);
 		}
 		if (expression == null) {
-
+			expression = parseM(str);
 		}
 
 		return expression;
@@ -62,15 +62,44 @@ public class SimpleExpressionParser implements ExpressionParser {
 			expression = parseHelper(str, '*', this::parseM, this::paraseE);
 		}
 		if (str.matches(divRegex) && expression == null) {
-			expression = parseHelper(str, '/', this::parseM, this::parseE);
-
+			expression = parseHelper(str, '/', this::parseM, this::paraseE);
 		}
 		if (expression == null) {
-			expression = parseExponentExpression(str);
+			try {
+				expression = parseExponentExpression(str);
+			} catch (ExpressionParseException e) {
+				e.printStackTrace();
+			}
 		}
 		return expression;
-
 	}
+
+	protected Expression paraseE(String str) {
+		Expression expression = null;
+		final String parenRegex = "\\(.+\\)";
+		if(str.matches(parenRegex)){
+			Expression expr = null;
+			try {
+				expr = parseStartExpression(str.substring(1, str.length()-1));
+			} catch (ExpressionParseException e) {
+				e.printStackTrace();
+			}
+			if(expr != null)
+				expression = new ParentheticalExpression(expr);
+		}
+		if(expression == null){
+			expression = parseLiteralExpression(str);
+		}
+		if (expression == null){
+			expression = parseVariableExpression(str);
+		}
+		return expression;
+	}
+
+
+
+
+
 
 
 
@@ -222,6 +251,8 @@ public class SimpleExpressionParser implements ExpressionParser {
 					output = new MultiplicativeExpression(left, right);
 				} else if (op == '/') {
 					output = new DivisionExpression(left, right);
+				} else if (op == '^') {
+					output = new ExponentExpression(left, right);
 				}
 			}
 		}
