@@ -17,10 +17,8 @@ public class MultiplicativeExpression implements Expression {
         Expression.indent(stringBuilder, indentLevel);
         indentLevel++;
         stringBuilder.append("*\n");
-        Expression.indent(stringBuilder, indentLevel);
         stringBuilder.append(expr1.convertToString(indentLevel)).append("\n");
-        Expression.indent(stringBuilder, indentLevel);
-        stringBuilder.append(expr2.convertToString(indentLevel));
+        stringBuilder.append(expr2.convertToString(indentLevel)).append("\n");
     }
 
 }

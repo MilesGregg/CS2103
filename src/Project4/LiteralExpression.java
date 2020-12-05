@@ -12,8 +12,7 @@ public class LiteralExpression implements Expression {
     @Override
     public void convertToString(StringBuilder stringBuilder, int indentLevel) {
         Expression.indent(stringBuilder, indentLevel);
-        indentLevel++;
-        stringBuilder.append(value);
+        stringBuilder.append(value).append("\n");
     }
 
 }
