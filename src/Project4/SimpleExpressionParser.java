@@ -24,20 +24,131 @@ public class SimpleExpressionParser implements ExpressionParser {
 		return expression;
 	}
 	
-	protected Expression parseStartExpression (String str) {
+	protected Expression parseStartExpression (String str) throws ExpressionParseException {
 		Expression expression = null;
 		// TODO implement this method, helper methods, classes that implement Expression, etc.
-		// expression = parseAdditiveExpression(str);
-		// if (expression == null) {
-		// 	expression = parseParentheticalExpression(str);
-		// }
+		 expression = parseAdditiveExpression(str);
+		 if (expression == null) {
+		 	expression = parseParentheticalExpression(str);
+		 }
+	 	if(expression == null)
+			throw new ExpressionParseException("Cannot parse expression: "+str);
+		return expression;
+	}
+	/*
+	 * Grammar:
+	 * S -> A | P
+	 * A -> A+M | A-M | M
+	 * M -> M*E | M/E | E
+	 * E -> P^E | P
+	 * P -> (S) | L | V
+	 * L -> <float>
+	 * V -> x
+	 */
+	protected Expression parseAdditiveExpression(String str) throws ExpressionParseException {
+		Expression expression = null;
+		final String addRegex = ".+\\+.+";
+		final String subRegex = ".+-.+";
+		if(str.matches(addRegex)) {
+			int i = str.indexOf('+');
+			Expression expr1 = parseAdditiveExpression(str.substring(0, i));
+			Expression expr2 = parseMultiplicativeExpression(str.substring(i+1));
+			if(expr1 != null && expr2 != null)
+				expression = new AdditiveExpression(expr1, expr2);
+		}
+		if(str.matches(subRegex) && expression == null){
+			int i = str.indexOf('-');
+			Expression expr1 = parseAdditiveExpression(str.substring(0, i));
+			Expression expr2 = parseMultiplicativeExpression(str.substring(i+1));
+			if(expr1 != null && expr2 != null)
+				expression = new SubtractiveExpression(expr1, expr2);
+		}
+		if(expression == null){
+			expression = parseMultiplicativeExpression(str);
+		}
+		return expression;
+
+	}
+	/*
+	 * Grammar:
+	 * S -> A | P
+	 * A -> A+M | A-M | M
+	 * M -> M*E | M/E | E
+	 * E -> P^E | P
+	 * P -> (S) | L | V
+	 * L -> <float>
+	 * V -> x
+	 */
+	protected Expression parseMultiplicativeExpression(String str) throws ExpressionParseException {
+		Expression expression = null;
+		final String multRegex = ".+\\*.+";
+		final String divRegex = ".+/.+";
+		if(str.matches(multRegex)) {
+			int i = str.indexOf('*');
+			Expression expr1 = parseMultiplicativeExpression(str.substring(0, i));
+			Expression expr2 = parseExponentExpression(str.substring(i+1));
+			if(expr1 != null && expr2 != null)
+				expression = new MultiplicativeExpression(expr1, expr2);
+		}
+		if(str.matches(divRegex) && expression == null){
+			int i = str.indexOf('/');
+			Expression expr1 = parseMultiplicativeExpression(str.substring(0, i));
+			Expression expr2 = parseExponentExpression(str.substring(i+1));
+			if(expr1 != null && expr2 != null)
+				expression = new DivisionExpression(expr1, expr2);
+		}
+		if(expression == null){
+			expression = parseExponentExpression(str);
+		}
+		return expression;
+	}
+	/*
+	 * Grammar:
+	 * S -> A | P
+	 * A -> A+M | A-M | M
+	 * M -> M*E | M/E | E
+	 * E -> P^E | P
+	 * P -> (S) | L | V
+	 * L -> <float>
+	 * V -> x
+	 */
+	protected Expression parseExponentExpression(String str) throws ExpressionParseException {
+		Expression expression = null;
+		final String exponentRegex = ".+\\^.+";
+		if(str.matches(exponentRegex)) {
+			int i = str.indexOf('^');
+			Expression expr1 = parseParentheticalExpression(str.substring(0, i));
+			Expression expr2 = parseExponentExpression(str.substring(i+1));
+			if(expr1 != null && expr2 != null)
+				expression = new ExponentExpression(expr1, expr2);
+		}
+		if(expression == null){
+			expression = parseParentheticalExpression(str);
+		}
+		return expression;
+	}
+
+	protected Expression parseParentheticalExpression(String str) throws ExpressionParseException {
+		Expression expression = null;
+		final String parenRegex = "\\(.+\\)";
+		if(str.matches(parenRegex)){
+			Expression expr = parseStartExpression(str.substring(1, str.length()-1));
+			if(expr != null)
+				expression = new ParentheticalExpression(expr);
+		}
+		if(expression == null){
+			expression = parseLiteralExpression(str);
+		}
+		if (expression == null){
+			expression = parseVariableExpression(str);
+		}
 		return expression;
 	}
 
 	protected VariableExpression parseVariableExpression (String str) {
 		if (str.equals("x")) {
 			// TODO implement the VariableExpression class and uncomment line below
-			// return new VariableExpression();
+			return new VariableExpression();
 		}
 		return null;
 	}
@@ -85,7 +196,7 @@ public class SimpleExpressionParser implements ExpressionParser {
 
 		if (str.matches(fpRegex)) {
 			// TODO implement the LiteralExpression class and uncomment line below
-			// return new LiteralExpression(str);
+			return new LiteralExpression(str);
 		}
 		return null;
 	}

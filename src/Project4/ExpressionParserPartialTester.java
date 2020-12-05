@@ -90,6 +90,7 @@ public class ExpressionParserPartialTester {
          */
         public void testEvaluate1 () throws ExpressionParseException {
                 final String expressionStr = "4*(x+5*x)";
+                System.out.println((int) _parser.parse(expressionStr).evaluate(3));
                 assertEquals(72, (int) _parser.parse(expressionStr).evaluate(3));
         }
 

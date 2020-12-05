@@ -1,6 +1,10 @@
 public class ParentheticalExpression implements Expression {
     Expression expr;
 
+    public ParentheticalExpression(Expression expr1){
+        this.expr = expr1;
+    }
+
     @Override
     public double evaluate(double x) {
         return expr.evaluate(x);
