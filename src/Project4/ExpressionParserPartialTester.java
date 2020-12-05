@@ -53,6 +53,7 @@ public class ExpressionParserPartialTester {
 	 * Verifies that a specific expression is parsed into the correct parse tree.
 	 */
 	public void testExpression3 () throws ExpressionParseException {
+		System.out.println(_parser.parse("x").convertToString(0));
 		final String expressionStr = "4*(x-5*x)";
 		final String parseTreeStr = "*\n\t4.0\n\t()\n\t\t-\n\t\t\tx\n\t\t\t*\n\t\t\t\t5.0\n\t\t\t\tx\n";
 		assertEquals(parseTreeStr, _parser.parse(expressionStr).convertToString(0));
