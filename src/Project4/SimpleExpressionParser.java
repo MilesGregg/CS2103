@@ -31,8 +31,7 @@ public class SimpleExpressionParser implements ExpressionParser {
 		 if (expression == null) {
 		 	expression = parseParentheticalExpression(str);
 		 }
-	 	if(expression == null)
-			throw new ExpressionParseException("Cannot parse expression: "+str);
+
 		return expression;
 	}
 	/*
