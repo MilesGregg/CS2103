@@ -35,6 +35,49 @@ public class SimpleExpressionParser implements ExpressionParser {
 			throw new ExpressionParseException("Cannot parse expression: "+str);
 		return expression;
 	}
+
+	private Expression parseA(String str) {
+		Expression expression = null;
+		final String addRegex = ".+\\+.+";
+		final String subRegex = ".+-.+";
+		if (str.matches(addRegex)) {
+			expression = parseHelper(str, '+', this::parseA, this::parseM);
+		}
+		if (str.matches(subRegex) && expression == null) {
+			expression = parseHelper(str, '-', this::parseA, this::parseM);
+		}
+		if (expression == null) {
+
+		}
+
+		return expression;
+	}
+
+	private Expression parseM(String str) {
+		Expression expression = null;
+
+		final String multRegex = ".+\\*.+";
+		final String divRegex = ".+/.+";
+		if (str.matches(multRegex)) {
+			expression = parseHelper(str, '*', this::parseM, this::paraseE);
+		}
+		if (str.matches(divRegex) && expression == null) {
+			expression = parseHelper(str, '/', this::parseM, this::parseE);
+
+		}
+		if (expression == null) {
+			expression = parseExponentExpression(str);
+		}
+		return expression;
+
+	}
+
+
+
+
+
+
+
 	/*
 	 * Grammar:
 	 * S -> A | P
@@ -160,6 +203,29 @@ public class SimpleExpressionParser implements ExpressionParser {
 			expression = parseVariableExpression(str);
 		}
 		return expression;
+	}
+
+	private Expression parseHelper(String string,
+								   char op,
+								   Function<String, Expression> m1,
+								   Function<String, Expression> m2) {
+		Expression output = null;
+		for (int i = 0; i < string.length(); i++) {
+			Expression left = m1.apply(string.substring(0, i));
+			Expression right = m2.apply(string.substring(i + 1));
+			if (string.charAt(i) == op && left != null && right != null) {
+				if (op == '+') {
+					output = new AdditiveExpression(left, right);
+				} else if (op == '-') {
+					output = new SubtractiveExpression(left, right);
+				} else if (op == '*') {
+					output = new MultiplicativeExpression(left, right);
+				} else if (op == '/') {
+					output = new DivisionExpression(left, right);
+				}
+			}
+		}
+		return output;
 	}
 
 	protected VariableExpression parseVariableExpression (String str) {
