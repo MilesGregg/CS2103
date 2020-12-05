@@ -43,20 +43,18 @@ public class GraphingCalculator extends Application {
 		chart.setLegendVisible(false);
 		chart.setCreateSymbols(false);
 		graphPane.getChildren().add(chart);
-		button.setOnMouseClicked(new EventHandler<MouseEvent>() {
-			public void handle (MouseEvent e) {
-				try {
-					final Expression expression = expressionParser.parse(textField.getText());
-					final XYChart.Series series = new XYChart.Series();
-					for (double x = -10; x <= +10; x += 0.01) {
-						final double y = expression.evaluate(x);
-						series.getData().add(new XYChart.Data(x, y));
-					}
-					chart.getData().clear();
-					chart.getData().addAll(series);
-				} catch (ExpressionParseException epe) {
-					textField.setStyle("-fx-text-fill: red");
+		button.setOnMouseClicked(e -> {
+			try {
+				final Expression expression = expressionParser.parse(textField.getText());
+				final XYChart.Series series = new XYChart.Series();
+				for (double x = -10; x <= +10; x += 0.01) {
+					final double y = expression.evaluate(x);
+					series.getData().add(new XYChart.Data(x, y));
 				}
+				chart.getData().clear();
+				chart.getData().addAll(series);
+			} catch (ExpressionParseException epe) {
+				textField.setStyle("-fx-text-fill: red");
 			}
 		});
 		queryPane.getChildren().add(button);
