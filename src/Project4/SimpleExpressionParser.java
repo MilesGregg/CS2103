@@ -24,7 +24,7 @@ public class SimpleExpressionParser implements ExpressionParser {
 		return expression;
 	}
 	
-	protected Expression parseStartExpression (String str) throws ExpressionParseException {
+	protected Expression parseStartExpression (String str) {
 		Expression expression = null;
 		// TODO implement this method, helper methods, classes that implement Expression, etc.
 		 expression = parseA(str);
@@ -64,11 +64,8 @@ public class SimpleExpressionParser implements ExpressionParser {
 			expression = parseHelper(str, '/', this::parseM, this::paraseE);
 		}
 		if (expression == null) {
-			try {
-				expression = parseExponentExpression(str);
-			} catch (ExpressionParseException e) {
-				e.printStackTrace();
-			}
+
+			expression = parseExponentExpression(str);
 		}
 		return expression;
 	}
@@ -78,11 +75,9 @@ public class SimpleExpressionParser implements ExpressionParser {
 		final String parenRegex = "\\(.+\\)";
 		if(str.matches(parenRegex)){
 			Expression expr = null;
-			try {
-				expr = parseStartExpression(str.substring(1, str.length()-1));
-			} catch (ExpressionParseException e) {
-				e.printStackTrace();
-			}
+
+			expr = parseStartExpression(str.substring(1, str.length()-1));
+
 			if(expr != null)
 				expression = new ParentheticalExpression(expr);
 		}
@@ -116,7 +111,7 @@ public class SimpleExpressionParser implements ExpressionParser {
 	 * L -> <float>
 	 * V -> x
 	 */
-	protected Expression parseAdditiveExpression(String str) throws ExpressionParseException {
+	protected Expression parseAdditiveExpression(String str) {
 		Expression expression = null;
 		final String addRegex = ".+\\+.+";
 		final String subRegex = ".+-.+";
@@ -157,7 +152,7 @@ public class SimpleExpressionParser implements ExpressionParser {
 	 * L -> <float>
 	 * V -> x
 	 */
-	protected Expression parseMultiplicativeExpression(String str) throws ExpressionParseException {
+	protected Expression parseMultiplicativeExpression(String str) {
 		Expression expression = null;
 		final String multRegex = ".+\\*.+";
 		final String divRegex = ".+/.+";
@@ -197,7 +192,7 @@ public class SimpleExpressionParser implements ExpressionParser {
 	 * L -> <float>
 	 * V -> x
 	 */
-	protected Expression parseExponentExpression(String str) throws ExpressionParseException {
+	protected Expression parseExponentExpression(String str) {
 		Expression expression = null;
 		final String exponentRegex = ".+\\^.+";
 		if(str.matches(exponentRegex)) {
@@ -216,7 +211,7 @@ public class SimpleExpressionParser implements ExpressionParser {
 		return expression;
 	}
 
-	protected Expression parseParentheticalExpression(String str) throws ExpressionParseException {
+	protected Expression parseParentheticalExpression(String str) {
 		Expression expression = null;
 		final String parenRegex = "\\(.+\\)";
 		if(str.matches(parenRegex)){
