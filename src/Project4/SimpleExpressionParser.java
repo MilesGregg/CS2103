@@ -159,6 +159,11 @@ public class SimpleExpressionParser implements ExpressionParser {
 		return output;
 	}
 
+	/**
+	 * parse P according to the CFG (context free grammars) rules.
+	 * @param str - the string to be parsed into the expression tree
+	 * @return - the expression of P -> (S) | L | V
+	 */
 	protected Expression parseParentheticalExpression(String str) {
 		Expression expression = null;
 		final String parenRegex = "\\(.+\\)";
@@ -175,7 +180,12 @@ public class SimpleExpressionParser implements ExpressionParser {
 		}
 		return expression;
 	}
-	
+
+	/**
+	 * parse V according to the CFG (context free grammars) rules.
+	 * @param str - the string to be parsed into the expression tree
+	 * @return - the expression of V -> x
+	 */
 	protected VariableExpression parseVariableExpression (String str) {
 		if (str.equals("x")) {
 			// TODO implement the VariableExpression class and uncomment line below
@@ -184,6 +194,11 @@ public class SimpleExpressionParser implements ExpressionParser {
 		return null;
 	}
 
+	/**
+	 * parse L according to the CFG (context free grammars) rules.
+	 * @param str - the string to be parsed into the expression tree
+	 * @return - the expression of L -> <float>
+	 */
 	protected LiteralExpression parseLiteralExpression (String str) {
 		// From https://stackoverflow.com/questions/3543729/how-to-check-that-a-string-is-parseable-to-a-double/22936891:
 		final String Digits     = "(\\p{Digit}+)";
