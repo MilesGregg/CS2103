@@ -13,8 +13,9 @@ public class ParentheticalExpression implements Expression {
     @Override
     public void convertToString(StringBuilder stringBuilder, int indentLevel) {
         Expression.indent(stringBuilder, indentLevel);
+        indentLevel++;
         stringBuilder.append("()\n");
-        stringBuilder.append(expr.convertToString(indentLevel)).append("\n");
+        stringBuilder.append(expr.convertToString(indentLevel));
     }
 
 }

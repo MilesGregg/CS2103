@@ -15,10 +15,10 @@ public class SubtractiveExpression implements Expression {
     @Override
     public void convertToString(StringBuilder stringBuilder, int indentLevel) {
         Expression.indent(stringBuilder, indentLevel);
-
+        indentLevel++;
         stringBuilder.append("-\n");
-        stringBuilder.append(expr1.convertToString(indentLevel)).append("\n");
-        stringBuilder.append(expr2.convertToString(indentLevel)).append("\n");
+        stringBuilder.append(expr1.convertToString(indentLevel));
+        stringBuilder.append(expr2.convertToString(indentLevel));
     }
 
 }

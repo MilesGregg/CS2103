@@ -58,6 +58,86 @@ public class ExpressionParserPartialTester {
 		assertEquals(parseTreeStr, _parser.parse(expressionStr).convertToString(0));
 	}
 
+	@Test
+	public void testExpression4() throws ExpressionParseException {
+		final String expressionStr = "6/2*(1+2)";
+		assertEquals(_parser.parse(expressionStr).evaluate(0), 9, 0.3);
+	}
+
+	@Test
+	public void testExpression5() throws ExpressionParseException {
+		final String expressionStr = "9-3/(1/3)+1";
+		assertEquals(_parser.parse(expressionStr).evaluate(0), 1, 0.3);
+	}
+
+	@Test
+	public void testExpression6() throws ExpressionParseException {
+		final String expressionStr = "10*4-2*(4^2/4)/2/(1/2)+9";
+		assertEquals(_parser.parse(expressionStr).evaluate(0), 41, 0.3);
+	}
+
+	@Test
+	public void testExpression7() throws ExpressionParseException {
+		final String expressionStr = "-10/(20/2^2*5/5)*8-2";
+		assertEquals(_parser.parse(expressionStr).evaluate(0), -18, 0.3);
+	}
+
+	@Test
+	/**
+	 * Verifies that a specific expression is evaluated correctly.
+	 */
+	public void testEvaluate4 () throws ExpressionParseException {
+		final String expressionStr = "(3)*(5)";
+		assertEquals(15, (int) _parser.parse(expressionStr).evaluate(0));
+	}
+
+	@Test
+	/**
+	 * Verifies that a specific expression is evaluated correctly.
+	 */
+	public void testEvaluate5 () throws ExpressionParseException {
+		final String expressionStr = "x^(7)";
+		assertEquals(128, (int) _parser.parse(expressionStr).evaluate(2));
+	}
+
+	@Test
+	/**
+	 * Verifies that a specific expression is evaluated correctly.
+	 */
+	public void testEvaluate6 () throws ExpressionParseException {
+		final String expressionStr = "x^(7)-3";
+		assertEquals(125, (int) _parser.parse(expressionStr).evaluate(2));
+	}
+
+	@Test
+	/**
+	 * Verifies that a specific expression is evaluated correctly.
+	 */
+	public void testEvaluate7 () throws ExpressionParseException {
+		final String expressionStr = "x^(7-3*x+(4/x))-3";
+		assertEquals(5, (int) _parser.parse(expressionStr).evaluate(2));
+	}
+
+	@Test
+	/**
+	 * Verifies that a specific expression is evaluated correctly.
+	 */
+	public void testEvaluate8 () throws ExpressionParseException {
+		final String expressionStr = "0+-2";
+		assertEquals(-2, (int) _parser.parse(expressionStr).evaluate(2));
+	}
+
+	@Test
+	/**
+	 * Verifies that a specific expression is parsed into the correct parse tree.
+	 */
+	 public void testExpression19 () throws ExpressionParseException {
+	 final String expressionStr = "x^(7-3*x+(4/x))-3";
+	 final String parseTreeStr = "-\n\t^\n\t\tx\n\t\t()\n\t\t\t+\n\t\t\t\t-\n\t\t\t\t\t7.0\n\t\t\t\t\t*" +
+	 "\n\t\t\t\t\t\t3.0\n\t\t\t\t\t\tx\n\t\t\t\t()\n\t\t\t\t\t/\n\t\t\t\t\t\t4.0\n\t\t\t\t\t\tx\n\t3.0\n";
+	 assertEquals(parseTreeStr, _parser.parse(expressionStr).convertToString(0));
+	 }
+
 	@Test(expected = ExpressionParseException.class) 
 	/**
 	 * Verifies that a specific expression is parsed into the correct parse tree.
