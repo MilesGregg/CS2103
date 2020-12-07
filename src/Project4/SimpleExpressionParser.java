@@ -36,6 +36,7 @@ public class SimpleExpressionParser implements ExpressionParser {
 	}
 
 	private Expression parseA(String str) {
+		System.out.println("Parse A String: " + str);
 		Expression expression = null;
 		final String addRegex = ".+\\+.+";
 		final String subRegex = ".+-.+";
@@ -54,40 +55,60 @@ public class SimpleExpressionParser implements ExpressionParser {
 
 	private Expression parseM(String str) {
 		Expression expression = null;
-
 		final String multRegex = ".+\\*.+";
 		final String divRegex = ".+/.+";
 		if (str.matches(multRegex)) {
-			expression = parseHelper(str, '*', this::parseM, this::paraseE);
+			expression = parseHelper(str, '*', this::parseM, this::parseE);
 		}
 		if (str.matches(divRegex) && expression == null) {
-			expression = parseHelper(str, '/', this::parseM, this::paraseE);
+			expression = parseHelper(str, '/', this::parseM, this::parseE);
 		}
 		if (expression == null) {
-
 			expression = parseExponentExpression(str);
+		}
+
+		return expression;
+	}
+
+	protected Expression parseE(String str) {
+		Expression expression = null;
+		final String exponentRegex = ".+\\^.+";
+		if (str.matches(exponentRegex)) {
+			expression = parseHelper(str, '^', this::parseParentheticalExpression, this::parseE);
+		}
+		if(expression == null){
+			expression = parseParentheticalExpression(str);
 		}
 		return expression;
 	}
 
-	protected Expression paraseE(String str) {
-		Expression expression = null;
-		final String parenRegex = "\\(.+\\)";
-		if(str.matches(parenRegex)){
-			Expression expr = null;
-
-			expr = parseStartExpression(str.substring(1, str.length()-1));
-
-			if(expr != null)
-				expression = new ParentheticalExpression(expr);
+	private Expression parseHelper(String string,
+								   char op,
+								   Function<String, Expression> m1,
+								   Function<String, Expression> m2) {
+		Expression output = null;
+		System.out.println("String: " + string);
+		System.out.println("Op: " + op);
+		for (int i = 0; i < string.length(); i++) {
+			Expression left = m1.apply(string.substring(0, i));
+			Expression right = m2.apply(string.substring(i + 1));
+			if (string.charAt(i) == op && left != null && right != null) {
+				if (op == '+') {
+					output = new AdditiveExpression(left, right);
+				} else if (op == '-') {
+					output = new SubtractiveExpression(left, right);
+				} else if (op == '*') {
+					output = new MultiplicativeExpression(left, right);
+				} else if (op == '/') {
+					output = new DivisionExpression(left, right);
+				} else if (op == '^') {
+					System.out.println("Left: " + string.substring(0, i));
+					System.out.println("Right: " + string.substring(i + 1));
+					output = new ExponentExpression(left, right);
+				}
+			}
 		}
-		if(expression == null){
-			expression = parseLiteralExpression(str);
-		}
-		if (expression == null){
-			expression = parseVariableExpression(str);
-		}
-		return expression;
+		return output;
 	}
 
 
@@ -200,8 +221,11 @@ public class SimpleExpressionParser implements ExpressionParser {
 				if(str.charAt(i) == '^'){
 					Expression expr1 = parseParentheticalExpression(str.substring(0, i));
 					Expression expr2 = parseExponentExpression(str.substring(i+1));
-					if(expr1 != null && expr2 != null)
+					if (expr1 != null && expr2 != null) {
+						System.out.println("Left: " + str.substring(0, i));
+						System.out.println("Right: " + str.substring(i+1));
 						expression = new ExponentExpression(expr1, expr2);
+					}
 				}
 			}
 		}
@@ -228,30 +252,7 @@ public class SimpleExpressionParser implements ExpressionParser {
 		return expression;
 	}
 
-	private Expression parseHelper(String string,
-								   char op,
-								   Function<String, Expression> m1,
-								   Function<String, Expression> m2) {
-		Expression output = null;
-		for (int i = 0; i < string.length(); i++) {
-			Expression left = m1.apply(string.substring(0, i));
-			Expression right = m2.apply(string.substring(i + 1));
-			if (string.charAt(i) == op && left != null && right != null) {
-				if (op == '+') {
-					output = new AdditiveExpression(left, right);
-				} else if (op == '-') {
-					output = new SubtractiveExpression(left, right);
-				} else if (op == '*') {
-					output = new MultiplicativeExpression(left, right);
-				} else if (op == '/') {
-					output = new DivisionExpression(left, right);
-				} else if (op == '^') {
-					output = new ExponentExpression(left, right);
-				}
-			}
-		}
-		return output;
-	}
+
 
 	protected VariableExpression parseVariableExpression (String str) {
 		if (str.equals("x")) {

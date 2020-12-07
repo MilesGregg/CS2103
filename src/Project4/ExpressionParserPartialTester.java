@@ -86,22 +86,32 @@ public class ExpressionParserPartialTester {
 		_parser.parse(expressionStr);
 	}
 
-        @Test
-        /**
-         * Verifies that a specific expression is evaluated correctly.
-         */
-        public void testEvaluate1 () throws ExpressionParseException {
-                final String expressionStr = "4*(x+5*x)";
-                System.out.println((int) _parser.parse(expressionStr).evaluate(3));
-                assertEquals(72, (int) _parser.parse(expressionStr).evaluate(3));
-        }
+	@Test
+	/**
+	 * Verifies that a specific expression is evaluated correctly.
+	 */
+	public void testEvaluate1 () throws ExpressionParseException {
+		final String expressionStr = "4*(x+5*x)";
+		System.out.println((int) _parser.parse(expressionStr).evaluate(3));
+		assertEquals(72, (int) _parser.parse(expressionStr).evaluate(3));
+	}
 
-        @Test
-        /**
-         * Verifies that a specific expression is evaluated correctly.
-         */
-        public void testEvaluate2 () throws ExpressionParseException {
-                final String expressionStr = "x";
-                assertEquals(1, (int) _parser.parse(expressionStr).evaluate(1));
-        }
+	@Test
+	/**
+	 * Verifies that a specific expression is evaluated correctly.
+	 */
+	public void testEvaluate2 () throws ExpressionParseException {
+		final String expressionStr = "x";
+		assertEquals(1, (int) _parser.parse(expressionStr).evaluate(1));
+	}
+
+	@Test
+	public void testEvaluate3() throws ExpressionParseException {
+		//final String expressionStr = "((((3 + x) / 2 ^ (x + 2)) + -8))";
+		final String expressionStr = "((((3 + x) / 2 ^ (x + 2)) + -8))";
+		//final String expressionStr = "3^(x+2)";
+		System.out.println((int) _parser.parse(expressionStr).evaluate(4));
+		//System.out.println((int) _parser.parse(expressionStr).evaluate(3));
+		//assertEquals(-7, (int) _parser.parse(expressionStr).evaluate(3));
+	}
 }
