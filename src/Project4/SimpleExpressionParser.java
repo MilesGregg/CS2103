@@ -90,9 +90,11 @@ public class SimpleExpressionParser implements ExpressionParser {
 		System.out.println("String: " + string);
 		System.out.println("Op: " + op);
 		for (int i = 0; i < string.length(); i++) {
-			Expression left = m1.apply(string.substring(0, i));
-			Expression right = m2.apply(string.substring(i + 1));
-			if (string.charAt(i) == op && left != null && right != null) {
+
+			if (string.charAt(i) == op) {
+				Expression left = m1.apply(string.substring(0, i));
+				Expression right = m2.apply(string.substring(i + 1));
+				if(left == null || right == null) continue;
 				if (op == '+') {
 					output = new AdditiveExpression(left, right);
 				} else if (op == '-') {
