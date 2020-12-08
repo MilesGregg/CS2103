@@ -14,94 +14,157 @@ public class SimpleExpressionParser implements ExpressionParser {
 	 * L -> <float>
 	 * V -> x
 	 */
+
+	/**
+	 * parse a string into a {@link Expression}
+	 * @param str the string to parse into an expression tree
+	 * @return - the {@link Expression}
+	 * @throws ExpressionParseException if the string cannot be parsed into a expression
+	 */
 	public Expression parse (String str) throws ExpressionParseException {
+		// remove all spaces is the string to help with parsing
 		str = str.replaceAll(" ", "");
+		// start CFG (context free grammars) parsing expression
 		Expression expression = parseStartExpression(str);
 		if (expression == null) {
 			throw new ExpressionParseException("Cannot parse expression: " + str);
 		}
-
+		// return the parsed expression
 		return expression;
 	}
-	
+
+	/**
+	 * start the parsing according to the CFG (context free grammars)
+	 * @param str - the string to be parse into the expression tree
+	 * @return - the expression of S -> A | P
+	 */
 	protected Expression parseStartExpression (String str) {
 		Expression expression = null;
 		// TODO implement this method, helper methods, classes that implement Expression, etc.
+		// start at parsing A according to CFG (context free grammars)
 		 expression = parseA(str);
 		 if (expression == null) {
-		 	expression = parseP(str);
+		 	expression = parseParentheticalExpression(str);
 		 }
 
 		return expression;
 	}
 
-	private Expression parseA(String str) {
-		System.out.println("Parse A String: " + str);
+	/**
+	 * parse A according to the CFG (context free grammars) rules.
+	 * @param str - the string to be parsed into the expression tree
+	 * @return - the expression of A -> A+M | A-M | M
+	 */
+	private Expression parseA (String str) {
 		Expression expression = null;
 		final String addRegex = ".+\\+.+";
 		final String subRegex = ".+-.+";
+		// check if addRegex is in the string
 		if (str.matches(addRegex)) {
 			expression = parseHelper(str, '+', this::parseA, this::parseM);
 		}
+		// check if subRegex is in the string
 		if (str.matches(subRegex) && expression == null) {
 			expression = parseHelper(str, '-', this::parseA, this::parseM);
 		}
+		// if we can't find a expression then check M
 		if (expression == null) {
 			expression = parseM(str);
 		}
-
+		// the output expression for A
 		return expression;
 	}
 
-	private Expression parseM(String str) {
+	/**
+	 * parse M according to the CFG (context free grammars) rules.
+	 * @param str - the string to be parsed into the expression tree
+	 * @return - the expression of M -> M*E | M/E | E
+	 */
+	private Expression parseM (String str) {
 		Expression expression = null;
 		final String multRegex = ".+\\*.+";
 		final String divRegex = ".+/.+";
+		// check if multRegex is in the string
 		if (str.matches(multRegex)) {
 			expression = parseHelper(str, '*', this::parseM, this::parseE);
 		}
+		// check if divRegex is in the string
 		if (str.matches(divRegex) && expression == null) {
 			expression = parseHelper(str, '/', this::parseM, this::parseE);
 		}
+		// if we can't find a expression then check E
 		if (expression == null) {
 			expression = parseE(str);
 		}
-
+		// the output expression for M
 		return expression;
 	}
 
-	protected Expression parseE(String str) {
+	/**
+	 * parse E according to the CFG (context free grammars) rules.
+	 * @param str - the string to be parsed into the expression tree
+	 * @return - the expression of E -> P^E | P
+	 */
+	protected Expression parseE (String str) {
 		Expression expression = null;
 		final String exponentRegex = ".+\\^.+";
+		// check if exponentRegex is in the string
 		if (str.matches(exponentRegex)) {
-			expression = parseHelper(str, '^', this::parseP, this::parseE);
+			expression = parseHelper(str, '^', this::parseParentheticalExpression, this::parseE);
 		}
+		// if we can't find a expression then check E
 		if(expression == null){
-			expression = parseP(str);
+			expression = parseParentheticalExpression(str);
 		}
+		// the output expression for E
 		return expression;
 	}
 
-	private Expression parseHelper(String string,
+	/**
+	 * Helper function for CFG (context free grammars). We look at different operations to be parsed for the CFG (context free grammars).
+	 * @param string - the string to be parsed into a actual {@link Expression}
+	 * @param op - is the operation to check when parsing the string
+	 * @param m1 - the first method to check on the left side of the operation
+	 * @param m2 - the second method to check on the right side of the operation
+	 * @return - the {@link Expression} or null if the string couldn't be parsed with the operation
+	 */
+	private Expression parseHelper (String string,
 								   char op,
 								   Function<String, Expression> m1,
 								   Function<String, Expression> m2) {
+		// first set the output expression to null
 		Expression output = null;
-		System.out.println("String: " + string);
-		System.out.println("Op: " + op);
 		for (int i = 0; i < string.length(); i++) {
-
+			// check if the operation char is at the current index in the for loop
 			if (string.charAt(i) == op) {
+				// apply the current method to the expression and look at the left and right of the expression
 				Expression left = m1.apply(string.substring(0, i));
 				Expression right = m2.apply(string.substring(i + 1));
 				if(left == null || right == null) continue;
-				output = new BinaryExpression(left, right, op);
+				// check the operation with the respective class
+				if (op == '+') {
+					output = new AdditiveExpression(left, right);
+				} else if (op == '-') {
+					output = new SubtractiveExpression(left, right);
+				} else if (op == '*') {
+					output = new MultiplicativeExpression(left, right);
+				} else if (op == '/') {
+					output = new DivisionExpression(left, right);
+				} else if (op == '^') {
+					output = new ExponentExpression(left, right);
+				}
 			}
 		}
+		// output the expression
 		return output;
 	}
 
-	protected Expression parseP(String str) {
+	/**
+	 * parse P according to the CFG (context free grammars) rules.
+	 * @param str - the string to be parsed into the expression tree
+	 * @return - the expression of P -> (S) | L | V
+	 */
+	protected Expression parseParentheticalExpression(String str) {
 		Expression expression = null;
 		final String parenRegex = "\\(.+\\)";
 		if(str.matches(parenRegex)){
@@ -118,39 +181,24 @@ public class SimpleExpressionParser implements ExpressionParser {
 		return expression;
 	}
 
-
-
-
-
-
-
-
-
-
-	/*
-	 * Grammar:
-	 * S -> A | P
-	 * A -> A+M | A-M | M
-	 * M -> M*E | M/E | E
-	 * E -> P^E | P
-	 * P -> (S) | L | V
-	 * L -> <float>
-	 * V -> x
+	/**
+	 * parse V according to the CFG (context free grammars) rules.
+	 * @param str - the string to be parsed into the expression tree
+	 * @return - the expression of V -> x
 	 */
-
-
-
-
-
 	protected VariableExpression parseVariableExpression (String str) {
 		if (str.equals("x")) {
-			System.out.println("VARIABLE x");
 			// TODO implement the VariableExpression class and uncomment line below
 			return new VariableExpression();
 		}
 		return null;
 	}
 
+	/**
+	 * parse L according to the CFG (context free grammars) rules.
+	 * @param str - the string to be parsed into the expression tree
+	 * @return - the expression of L -> <float>
+	 */
 	protected LiteralExpression parseLiteralExpression (String str) {
 		// From https://stackoverflow.com/questions/3543729/how-to-check-that-a-string-is-parseable-to-a-double/22936891:
 		final String Digits     = "(\\p{Digit}+)";
@@ -193,7 +241,6 @@ public class SimpleExpressionParser implements ExpressionParser {
 		    "[\\x00-\\x20]*");// Optional trailing "whitespace"
 
 		if (str.matches(fpRegex)) {
-			System.out.println("LITERAL: "+str);
 			// TODO implement the LiteralExpression class and uncomment line below
 			return new LiteralExpression(str);
 		}

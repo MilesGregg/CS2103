@@ -110,9 +110,9 @@ public class ExpressionParserPartialTester {
 		//final String expressionStr = "((((3 + x) / 2 ^ (x + 2)) + -8))";
 		final String expressionStr = "((((3 + x) / 2 ^ (x + 2)) + -8))";
 		//final String expressionStr = "3^(x+2)";
-		System.out.println((int) _parser.parse(expressionStr).evaluate(4));
+		//System.out.println((int) _parser.parse(expressionStr).evaluate(4));
 		//System.out.println((int) _parser.parse(expressionStr).evaluate(3));
-		//assertEquals(-7, (int) _parser.parse(expressionStr).evaluate(3));
+		assertEquals(-7, (int) _parser.parse(expressionStr).evaluate(4));
 	}
 
 	@Test
