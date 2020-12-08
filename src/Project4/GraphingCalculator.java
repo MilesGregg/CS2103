@@ -52,7 +52,7 @@ public class GraphingCalculator extends Application {
 					series.getData().add(new XYChart.Data(x, y));
 				}
 				chart.getData().clear();
-				chart.getData().addAll(series);
+					chart.getData().addAll(series);
 			} catch (ExpressionParseException epe) {
 				textField.setStyle("-fx-text-fill: red");
 			}

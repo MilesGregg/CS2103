@@ -1,6 +1,8 @@
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.text.ParseException;
 import java.util.*;
 import java.io.*;
 
@@ -53,7 +55,6 @@ public class ExpressionParserPartialTester {
 	 * Verifies that a specific expression is parsed into the correct parse tree.
 	 */
 	public void testExpression3 () throws ExpressionParseException {
-		System.out.println(_parser.parse("x").convertToString(0));
 		final String expressionStr = "4*(x-5*x)";
 		final String parseTreeStr = "*\n\t4.0\n\t()\n\t\t-\n\t\t\tx\n\t\t\t*\n\t\t\t\t5.0\n\t\t\t\tx\n";
 		assertEquals(parseTreeStr, _parser.parse(expressionStr).convertToString(0));
@@ -92,7 +93,6 @@ public class ExpressionParserPartialTester {
 	 */
 	public void testEvaluate1 () throws ExpressionParseException {
 		final String expressionStr = "4*(x+5*x)";
-		System.out.println((int) _parser.parse(expressionStr).evaluate(3));
 		assertEquals(72, (int) _parser.parse(expressionStr).evaluate(3));
 	}
 
@@ -133,5 +133,82 @@ public class ExpressionParserPartialTester {
 		assertEquals(-1, _parser.parse(expr).evaluate(0), 0.3);
 		assertEquals(-6, _parser.parse(expr).evaluate(1), 0.3);
 		assertEquals(-11, _parser.parse(expr).evaluate(2), 0.3);
+	}
+
+	@Test
+	public void testEval7() throws ExpressionParseException {
+		final String expr = "1/(3*x^2+4*x)*(4*x+5)";
+		assertEquals(_parser.parse(expr).convertToString(0), "*\n" +
+				"\t/\n" +
+				"\t\t1.0\n" +
+				"\t\t()\n" +
+				"\t\t\t+\n" +
+				"\t\t\t\t*\n" +
+				"\t\t\t\t\t3.0\n" +
+				"\t\t\t\t\t^\n" +
+				"\t\t\t\t\t\tx\n" +
+				"\t\t\t\t\t\t2.0\n" +
+				"\t\t\t\t*\n" +
+				"\t\t\t\t\t4.0\n" +
+				"\t\t\t\t\tx\n" +
+				"\t()\n" +
+				"\t\t+\n" +
+				"\t\t\t*\n" +
+				"\t\t\t\t4.0\n" +
+				"\t\t\t\tx\n" +
+				"\t\t\t5.0\n");
+		assertEquals(0.328125, _parser.parse(expr).evaluate(4), 0.0001);
+		assertEquals(0.65, _parser.parse(expr).evaluate(2), 0.0001);
+		assertEquals(1.2857, _parser.parse(expr).evaluate(1), 0.0001);
+		assertEquals(-0.01534, _parser.parse(expr).evaluate(-87), 0.0001);
+		assertEquals(0.01332, _parser.parse(expr).evaluate(100), 0.0001);
+		System.out.println(_parser.parse(expr).convertToString(0));
+	}
+
+	@Test
+	public void testEval8() throws ExpressionParseException {
+		String expr = "3*(4+x)/(7+x+2^(x+3)) - 4*(6+3^x)/(7+2*x^9)";
+		assertEquals(_parser.parse(expr).convertToString(0), "-\n" +
+				"\t/\n" +
+				"\t\t*\n" +
+				"\t\t\t3.0\n" +
+				"\t\t\t()\n" +
+				"\t\t\t\t+\n" +
+				"\t\t\t\t\t4.0\n" +
+				"\t\t\t\t\tx\n" +
+				"\t\t()\n" +
+				"\t\t\t+\n" +
+				"\t\t\t\t+\n" +
+				"\t\t\t\t\t7.0\n" +
+				"\t\t\t\t\tx\n" +
+				"\t\t\t\t^\n" +
+				"\t\t\t\t\t2.0\n" +
+				"\t\t\t\t\t()\n" +
+				"\t\t\t\t\t\t+\n" +
+				"\t\t\t\t\t\t\tx\n" +
+				"\t\t\t\t\t\t\t3.0\n" +
+				"\t/\n" +
+				"\t\t*\n" +
+				"\t\t\t4.0\n" +
+				"\t\t\t()\n" +
+				"\t\t\t\t+\n" +
+				"\t\t\t\t\t6.0\n" +
+				"\t\t\t\t\t^\n" +
+				"\t\t\t\t\t\t3.0\n" +
+				"\t\t\t\t\t\tx\n" +
+				"\t\t()\n" +
+				"\t\t\t+\n" +
+				"\t\t\t\t7.0\n" +
+				"\t\t\t\t*\n" +
+				"\t\t\t\t\t2.0\n" +
+				"\t\t\t\t\t^\n" +
+				"\t\t\t\t\t\tx\n" +
+				"\t\t\t\t\t\t9.0\n");
+		assertEquals(0.171998, _parser.parse(expr).evaluate(4), 0.0001);
+		assertEquals(0.3808284, _parser.parse(expr).evaluate(2), 0.0001);
+		assertEquals(-3.375, _parser.parse(expr).evaluate(1), 0.0001);
+		assertEquals(3.1125, _parser.parse(expr).evaluate(-87), 0.0001);
+		assertEquals(-3.2, _parser.parse(expr).evaluate(0), 0.0001);
+		System.out.println(_parser.parse(expr).convertToString(0));
 	}
 }

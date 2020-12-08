@@ -1,13 +1,17 @@
+/**
+ * This class represents a binary expression, which is an expression with a binary operation
+ * (such as addition, subtraction, multiplication, division, and exponentiation)
+ */
 public class BinaryExpression implements Expression {
-    private final Expression left; // left expression
-    private final Expression right; // right expression
-    private final char op; // current operation we are trying
+    private final Expression left; // the left expression
+    private final Expression right; // the right expression
+    private final char op; // operation being applied to the left and right expressions
 
     /**
-     * Binary Expression for all operations
-     * @param left - left expression
-     * @param right - right expression
-     * @param op - current operation we are recursing on
+     * Constructor for a binary expression
+     * @param left - the left expression
+     * @param right - the right expression
+     * @param op - a char representing the operation being applied to the left and right expressions
      */
     public BinaryExpression(Expression left, Expression right, char op){
         this.left = left;
@@ -24,6 +28,7 @@ public class BinaryExpression implements Expression {
     public double evaluate(double x) {
         final double leftEval = left.evaluate(x);
         final double rightEval = right.evaluate(x);
+        // for each character, applies the corresponding operation on the 2 evaluated expressions
         switch (op) {
             case '+':
                 return leftEval + rightEval;
@@ -36,7 +41,9 @@ public class BinaryExpression implements Expression {
             case '^':
                 return Math.pow(leftEval, rightEval);
             default:
-                return 0;
+                // if the operation character is not any of the 5 listed above, something has gone wrong
+                // and an error is thrown (this should never happen)
+                throw new RuntimeException("Invalid operation");
         }
     }
 
@@ -47,9 +54,11 @@ public class BinaryExpression implements Expression {
      */
     @Override
     public void convertToString(StringBuilder stringBuilder, int indentLevel) {
+        // indents the operation character at the current indent level
         Expression.indent(stringBuilder, indentLevel);
-        indentLevel++;
         stringBuilder.append(op).append("\n");
+        // indents the 2 expressions at one indent level further
+        indentLevel++;
         stringBuilder.append(left.convertToString(indentLevel));
         stringBuilder.append(right.convertToString(indentLevel));
     }

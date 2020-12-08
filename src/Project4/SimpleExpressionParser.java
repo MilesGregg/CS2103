@@ -40,10 +40,11 @@ public class SimpleExpressionParser implements ExpressionParser {
 	 */
 	protected Expression parseStartExpression (String str) {
 		Expression expression = null;
-		// TODO implement this method, helper methods, classes that implement Expression, etc.
-		// start at parsing A according to CFG (context free grammars)
+		// start at parsing the expression as an additive expression
 		 expression = parseA(str);
 		 if (expression == null) {
+		 	// if the expression cannot be parsed as an additive expression,
+		    // parse it as a parenthetical expression
 		 	expression = parseP(str);
 		 }
 
@@ -59,15 +60,15 @@ public class SimpleExpressionParser implements ExpressionParser {
 		Expression expression = null;
 		final String addRegex = ".+\\+.+";
 		final String subRegex = ".+-.+";
-		// check if addRegex is in the string
+		// check if string matches the addition regex
 		if (str.matches(addRegex)) {
 			expression = parseHelper(str, '+', this::parseA, this::parseM);
 		}
-		// check if subRegex is in the string
+		// check if string matches the subtraction regex
 		if (str.matches(subRegex) && expression == null) {
 			expression = parseHelper(str, '-', this::parseA, this::parseM);
 		}
-		// if we can't find a expression then check M
+		// if we can't parse it as either of the 2 above forms, parse it as a multiplicative expression
 		if (expression == null) {
 			expression = parseM(str);
 		}
@@ -84,15 +85,15 @@ public class SimpleExpressionParser implements ExpressionParser {
 		Expression expression = null;
 		final String multRegex = ".+\\*.+";
 		final String divRegex = ".+/.+";
-		// check if multRegex is in the string
+		// check if string matches the multiplication regex
 		if (str.matches(multRegex)) {
 			expression = parseHelper(str, '*', this::parseM, this::parseE);
 		}
-		// check if divRegex is in the string
+		// check if string matches the division regex
 		if (str.matches(divRegex) && expression == null) {
 			expression = parseHelper(str, '/', this::parseM, this::parseE);
 		}
-		// if we can't find a expression then check E
+		// if we can't parse it in either of the 2 above forms, parse it as an exponential expression
 		if (expression == null) {
 			expression = parseE(str);
 		}
@@ -108,11 +109,11 @@ public class SimpleExpressionParser implements ExpressionParser {
 	protected Expression parseE (String str) {
 		Expression expression = null;
 		final String exponentRegex = ".+\\^.+";
-		// check if exponentRegex is in the string
+		// check if string matches the exponent regex
 		if (str.matches(exponentRegex)) {
 			expression = parseHelper(str, '^', this::parseP, this::parseE);
 		}
-		// if we can't find a expression then check E
+		// if it can't be parsed as an exponential expression, parse it as a parenthetical expression
 		if(expression == null){
 			expression = parseP(str);
 		}
@@ -134,9 +135,11 @@ public class SimpleExpressionParser implements ExpressionParser {
 				expression = new ParentheticalExpression(expr);
 		}
 		if(expression == null){
+			// If it can't be parsed as a parenthetical expression, parse it as a Literal Expression
 			expression = parseLiteralExpression(str);
 		}
 		if (expression == null){
+			// If it can't be parsed in either of the above 2 forms, parse it as a variable expression
 			expression = parseVariableExpression(str);
 		}
 		return expression;
@@ -180,7 +183,6 @@ public class SimpleExpressionParser implements ExpressionParser {
 	 */
 	protected VariableExpression parseVariableExpression (String str) {
 		if (str.equals("x")) {
-			// TODO implement the VariableExpression class and uncomment line below
 			return new VariableExpression();
 		}
 		return null;
@@ -233,7 +235,6 @@ public class SimpleExpressionParser implements ExpressionParser {
 		    "[\\x00-\\x20]*");// Optional trailing "whitespace"
 
 		if (str.matches(fpRegex)) {
-			// TODO implement the LiteralExpression class and uncomment line below
 			return new LiteralExpression(str);
 		}
 		return null;
