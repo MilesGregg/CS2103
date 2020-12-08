@@ -22,8 +22,8 @@ public class BinaryExpression implements Expression {
      */
     @Override
     public double evaluate(double x) {
-        double leftEval = left.evaluate(x);
-        double rightEval = right.evaluate(x);
+        final double leftEval = left.evaluate(x);
+        final double rightEval = right.evaluate(x);
         switch (op) {
             case '+':
                 return leftEval + rightEval;
