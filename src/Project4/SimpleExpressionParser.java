@@ -29,7 +29,7 @@ public class SimpleExpressionParser implements ExpressionParser {
 		// TODO implement this method, helper methods, classes that implement Expression, etc.
 		 expression = parseA(str);
 		 if (expression == null) {
-		 	expression = parseParentheticalExpression(str);
+		 	expression = parseP(str);
 		 }
 
 		return expression;
@@ -64,7 +64,7 @@ public class SimpleExpressionParser implements ExpressionParser {
 			expression = parseHelper(str, '/', this::parseM, this::parseE);
 		}
 		if (expression == null) {
-			expression = parseExponentExpression(str);
+			expression = parseE(str);
 		}
 
 		return expression;
@@ -74,10 +74,10 @@ public class SimpleExpressionParser implements ExpressionParser {
 		Expression expression = null;
 		final String exponentRegex = ".+\\^.+";
 		if (str.matches(exponentRegex)) {
-			expression = parseHelper(str, '^', this::parseParentheticalExpression, this::parseE);
+			expression = parseHelper(str, '^', this::parseP, this::parseE);
 		}
 		if(expression == null){
-			expression = parseParentheticalExpression(str);
+			expression = parseP(str);
 		}
 		return expression;
 	}
@@ -95,149 +95,13 @@ public class SimpleExpressionParser implements ExpressionParser {
 				Expression left = m1.apply(string.substring(0, i));
 				Expression right = m2.apply(string.substring(i + 1));
 				if(left == null || right == null) continue;
-				if (op == '+') {
-					output = new AdditiveExpression(left, right);
-				} else if (op == '-') {
-					output = new SubtractiveExpression(left, right);
-				} else if (op == '*') {
-					output = new MultiplicativeExpression(left, right);
-				} else if (op == '/') {
-					output = new DivisionExpression(left, right);
-				} else if (op == '^') {
-					System.out.println("Left: " + string.substring(0, i));
-					System.out.println("Right: " + string.substring(i + 1));
-					output = new ExponentExpression(left, right);
-				}
+				output = new BinaryExpression(left, right, op);
 			}
 		}
 		return output;
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-	/*
-	 * Grammar:
-	 * S -> A | P
-	 * A -> A+M | A-M | M
-	 * M -> M*E | M/E | E
-	 * E -> P^E | P
-	 * P -> (S) | L | V
-	 * L -> <float>
-	 * V -> x
-	 */
-	protected Expression parseAdditiveExpression(String str) {
-		Expression expression = null;
-		final String addRegex = ".+\\+.+";
-		final String subRegex = ".+-.+";
-		if(str.matches(addRegex)) {
-			for(int i = 0; i < str.length(); i++){
-				if(str.charAt(i) == '+'){
-					Expression expr1 = parseAdditiveExpression(str.substring(0, i));
-					Expression expr2 = parseMultiplicativeExpression(str.substring(i+1));
-					if(expr1 != null && expr2 != null)
-						expression = new AdditiveExpression(expr1, expr2);
-				}
-			}
-		}
-		if(str.matches(subRegex) && expression == null){
-			for(int i = 0; i < str.length(); i++){
-				if(str.charAt(i) == '-'){
-					Expression expr1 = parseAdditiveExpression(str.substring(0, i));
-					Expression expr2 = parseMultiplicativeExpression(str.substring(i+1));
-					if(expr1 != null && expr2 != null)
-						expression = new SubtractiveExpression(expr1, expr2);
-				}
-			}
-		}
-		if(expression == null){
-			System.out.println("GOING TO MULT");
-			expression = parseMultiplicativeExpression(str);
-		}
-		return expression;
-
-	}
-	/*
-	 * Grammar:
-	 * S -> A | P
-	 * A -> A+M | A-M | M
-	 * M -> M*E | M/E | E
-	 * E -> P^E | P
-	 * P -> (S) | L | V
-	 * L -> <float>
-	 * V -> x
-	 */
-	protected Expression parseMultiplicativeExpression(String str) {
-		Expression expression = null;
-		final String multRegex = ".+\\*.+";
-		final String divRegex = ".+/.+";
-		if(str.matches(multRegex)) {
-			for(int i = 0; i < str.length(); i++){
-				if(str.charAt(i) == '*'){
-					Expression expr1 = parseMultiplicativeExpression(str.substring(0, i));
-					Expression expr2 = parseExponentExpression(str.substring(i+1));
-					if(expr1 != null && expr2 != null)
-						expression = new MultiplicativeExpression(expr1, expr2);
-				}
-			}
-
-		}
-		if(str.matches(divRegex) && expression == null){
-			for(int i = 0; i < str.length(); i++){
-				if(str.charAt(i) == '/'){
-					Expression expr1 = parseMultiplicativeExpression(str.substring(0, i));
-					Expression expr2 = parseExponentExpression(str.substring(i+1));
-					if(expr1 != null && expr2 != null)
-						expression = new DivisionExpression(expr1, expr2);
-				}
-			}
-		}
-		if(expression == null){
-			expression = parseExponentExpression(str);
-		}
-		return expression;
-	}
-	/*
-	 * Grammar:
-	 * S -> A | P
-	 * A -> A+M | A-M | M
-	 * M -> M*E | M/E | E
-	 * E -> P^E | P
-	 * P -> (S) | L | V
-	 * L -> <float>
-	 * V -> x
-	 */
-	protected Expression parseExponentExpression(String str) {
-		Expression expression = null;
-		final String exponentRegex = ".+\\^.+";
-		if(str.matches(exponentRegex)) {
-			for(int i = 0; i < str.length(); i++){
-				if(str.charAt(i) == '^'){
-					Expression expr1 = parseParentheticalExpression(str.substring(0, i));
-					Expression expr2 = parseExponentExpression(str.substring(i+1));
-					if (expr1 != null && expr2 != null) {
-						System.out.println("Left: " + str.substring(0, i));
-						System.out.println("Right: " + str.substring(i+1));
-						expression = new ExponentExpression(expr1, expr2);
-					}
-				}
-			}
-		}
-		if(expression == null){
-			expression = parseParentheticalExpression(str);
-		}
-		return expression;
-	}
-
-	protected Expression parseParentheticalExpression(String str) {
+	protected Expression parseP(String str) {
 		Expression expression = null;
 		final String parenRegex = "\\(.+\\)";
 		if(str.matches(parenRegex)){
@@ -253,6 +117,28 @@ public class SimpleExpressionParser implements ExpressionParser {
 		}
 		return expression;
 	}
+
+
+
+
+
+
+
+
+
+
+	/*
+	 * Grammar:
+	 * S -> A | P
+	 * A -> A+M | A-M | M
+	 * M -> M*E | M/E | E
+	 * E -> P^E | P
+	 * P -> (S) | L | V
+	 * L -> <float>
+	 * V -> x
+	 */
+
+
 
 
 

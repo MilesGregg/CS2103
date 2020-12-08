@@ -114,4 +114,24 @@ public class ExpressionParserPartialTester {
 		//System.out.println((int) _parser.parse(expressionStr).evaluate(3));
 		//assertEquals(-7, (int) _parser.parse(expressionStr).evaluate(3));
 	}
+
+	@Test
+	public void testEval4() throws ExpressionParseException {
+		final String expr = "45/(8*(5-4)-3) + 3*(2^2)/(5-3)";
+		assertEquals(15, _parser.parse(expr).evaluate(0), 0.3);
+	}
+
+	@Test
+	public void testEval5() throws ExpressionParseException {
+		final String expr = "((3-2)+(1+2)^2)/(5+(4-1))";
+		assertEquals(1.25, _parser.parse(expr).evaluate(0), 0.3);
+	}
+
+	@Test
+	public void testEval6() throws ExpressionParseException {
+		final String expr = "-1*(2*x-(3-(4-3*x))+6*x)";
+		assertEquals(-1, _parser.parse(expr).evaluate(0), 0.3);
+		assertEquals(-6, _parser.parse(expr).evaluate(1), 0.3);
+		assertEquals(-11, _parser.parse(expr).evaluate(2), 0.3);
+	}
 }
