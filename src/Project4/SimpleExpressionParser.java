@@ -44,7 +44,7 @@ public class SimpleExpressionParser implements ExpressionParser {
 		// start at parsing A according to CFG (context free grammars)
 		 expression = parseA(str);
 		 if (expression == null) {
-		 	expression = parseParentheticalExpression(str);
+		 	expression = parseP(str);
 		 }
 
 		return expression;
@@ -110,13 +110,35 @@ public class SimpleExpressionParser implements ExpressionParser {
 		final String exponentRegex = ".+\\^.+";
 		// check if exponentRegex is in the string
 		if (str.matches(exponentRegex)) {
-			expression = parseHelper(str, '^', this::parseParentheticalExpression, this::parseE);
+			expression = parseHelper(str, '^', this::parseP, this::parseE);
 		}
 		// if we can't find a expression then check E
 		if(expression == null){
-			expression = parseParentheticalExpression(str);
+			expression = parseP(str);
 		}
 		// the output expression for E
+		return expression;
+	}
+
+	/**
+	 * parse P according to the CFG (context free grammars) rules.
+	 * @param str - the string to be parsed into the expression tree
+	 * @return - the expression of P -> (S) | L | V
+	 */
+	protected Expression parseP(String str) {
+		Expression expression = null;
+		final String parenRegex = "\\(.+\\)";
+		if(str.matches(parenRegex)){
+			Expression expr = parseStartExpression(str.substring(1, str.length()-1));
+			if(expr != null)
+				expression = new ParentheticalExpression(expr);
+		}
+		if(expression == null){
+			expression = parseLiteralExpression(str);
+		}
+		if (expression == null){
+			expression = parseVariableExpression(str);
+		}
 		return expression;
 	}
 
@@ -142,44 +164,14 @@ public class SimpleExpressionParser implements ExpressionParser {
 				Expression right = m2.apply(string.substring(i + 1));
 				if(left == null || right == null) continue;
 				// check the operation with the respective class
-				if (op == '+') {
-					output = new AdditiveExpression(left, right);
-				} else if (op == '-') {
-					output = new SubtractiveExpression(left, right);
-				} else if (op == '*') {
-					output = new MultiplicativeExpression(left, right);
-				} else if (op == '/') {
-					output = new DivisionExpression(left, right);
-				} else if (op == '^') {
-					output = new ExponentExpression(left, right);
-				}
+				output = new BinaryExpression(left, right, op);
 			}
 		}
 		// output the expression
 		return output;
 	}
 
-	/**
-	 * parse P according to the CFG (context free grammars) rules.
-	 * @param str - the string to be parsed into the expression tree
-	 * @return - the expression of P -> (S) | L | V
-	 */
-	protected Expression parseParentheticalExpression(String str) {
-		Expression expression = null;
-		final String parenRegex = "\\(.+\\)";
-		if(str.matches(parenRegex)){
-			Expression expr = parseStartExpression(str.substring(1, str.length()-1));
-			if(expr != null)
-				expression = new ParentheticalExpression(expr);
-		}
-		if(expression == null){
-			expression = parseLiteralExpression(str);
-		}
-		if (expression == null){
-			expression = parseVariableExpression(str);
-		}
-		return expression;
-	}
+
 
 	/**
 	 * parse V according to the CFG (context free grammars) rules.
