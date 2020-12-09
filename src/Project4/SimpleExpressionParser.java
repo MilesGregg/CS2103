@@ -1,8 +1,6 @@
 import java.util.function.*;
 
-/**
- * TODO: Implement this class.
- */
+
 public class SimpleExpressionParser implements ExpressionParser {
 	/*
 	 * Grammar:
