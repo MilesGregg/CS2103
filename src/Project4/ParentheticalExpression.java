@@ -8,7 +8,7 @@ public class ParentheticalExpression implements Expression {
      * The constructor for a parenthetical expression
      * @param expr1 the expression stored within the parentheses
      */
-    public ParentheticalExpression(Expression expr1){
+    public ParentheticalExpression(Expression expr1) {
         this.expr = expr1;
     }
 

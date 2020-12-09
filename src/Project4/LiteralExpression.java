@@ -9,7 +9,7 @@ public class LiteralExpression implements Expression {
      * Constructs a literal expression, converting a string into a double and storing its value
      * @param str the double value as a string
      */
-    public LiteralExpression(String str){
+    public LiteralExpression(String str) {
         value = Double.parseDouble(str);
     }
 

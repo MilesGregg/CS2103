@@ -13,7 +13,7 @@ public class BinaryExpression implements Expression {
      * @param right - the right expression
      * @param op - a char representing the operation being applied to the left and right expressions
      */
-    public BinaryExpression(Expression left, Expression right, char op){
+    public BinaryExpression(Expression left, Expression right, char op) {
         this.left = left;
         this.right = right;
         this.op = op;
